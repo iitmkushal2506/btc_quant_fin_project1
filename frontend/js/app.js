@@ -246,6 +246,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const livePriceEl = document.getElementById('live-price');
             if (livePriceEl) livePriceEl.textContent = `$${price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 
+            // Real-time chart tick streaming
+            if (chartManager && price) {
+                chartManager.updateLiveTick(price);
+            }
+
             // 2. Countdown Timer
             currentCandleSeconds = data.seconds_until_next_candle || 300;
             renderCountdown(currentCandleSeconds);
@@ -743,8 +748,47 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ----------------------------------------------------
-    // 10. BACKGROUND POLLING LOOPS
+    // 10. LIVE WEBSOCKET TICK STREAMING & POLLING
     // ----------------------------------------------------
+    function initLiveWebSocket() {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/ws/live`;
+        let ws = null;
+
+        function connect() {
+            try {
+                ws = new WebSocket(wsUrl);
+                ws.onmessage = (event) => {
+                    try {
+                        const msg = JSON.parse(event.data);
+                        if (msg.type === 'LIVE_TICKER_UPDATE' && msg.price) {
+                            const price = parseFloat(msg.price);
+                            const livePriceEl = document.getElementById('live-price');
+                            if (livePriceEl) {
+                                livePriceEl.textContent = `$${price.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                            }
+                            if (chartManager && price > 0) {
+                                chartManager.updateLiveTick(price);
+                            }
+                        }
+                    } catch (err) {}
+                };
+                ws.onclose = () => {
+                    setTimeout(connect, 3000);
+                };
+                ws.onerror = () => {
+                    try { ws.close(); } catch (e) {}
+                };
+            } catch (e) {
+                setTimeout(connect, 5000);
+            }
+        }
+
+        connect();
+    }
+
+    initLiveWebSocket();
+
     // Scalp telemetry poll every 3 seconds
     updateScalpTelemetry();
     setInterval(updateScalpTelemetry, 3000);
@@ -756,6 +800,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Macro overview poll every 6 seconds
     updateMacroOverview();
     setInterval(updateMacroOverview, 6000);
+
+    // Silent background klines synchronization every 15 seconds
+    setInterval(() => {
+        if (chartManager) chartManager.syncKlines();
+    }, 15000);
 
     // Countdown tick every 1 second
     setInterval(() => {

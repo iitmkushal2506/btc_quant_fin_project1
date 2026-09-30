@@ -305,9 +305,9 @@ def clean_float(val: Any, fallback: float = 0.0) -> float:
 @app.get("/api/market/klines")
 async def get_klines(
     timeframe: str = Query(DEFAULT_TIMEFRAME, enum=SUPPORTED_TIMEFRAMES),
-    limit: int = Query(200, ge=30, le=500)
+    limit: int = Query(2000, ge=30, le=2500)
 ):
-    """Get candlestick OHLCV data with technical indicators and order blocks."""
+    """Get candlestick OHLCV data with technical indicators and order blocks (up to 7+ days depth)."""
     df = await system_engine.market_collector.get_klines(timeframe, limit)
     df_ind = TechnicalAnalyzer.calculate_indicators(df)
     structure = MarketStructureAnalyzer.analyze_structure(df_ind)
@@ -323,7 +323,9 @@ async def get_klines(
             "low": clean_float(row["low"], close_val),
             "close": close_val,
             "volume": clean_float(row["volume"], 0.0),
+            "ema_9": clean_float(row.get("ema_9"), close_val),
             "ema_20": clean_float(row.get("ema_20"), close_val),
+            "ema_21": clean_float(row.get("ema_20"), close_val),
             "ema_50": clean_float(row.get("ema_50"), close_val),
             "ema_200": clean_float(row.get("ema_200"), close_val),
             "bb_upper": clean_float(row.get("bb_upper"), close_val),

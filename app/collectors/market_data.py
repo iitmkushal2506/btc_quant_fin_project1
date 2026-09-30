@@ -69,6 +69,7 @@ class MarketDataCollector:
     async def get_klines(self, timeframe: str = DEFAULT_TIMEFRAME, limit: int = KLINE_LIMIT) -> pd.DataFrame:
         """
         Fetch OHLCV candlestick data for given timeframe.
+        Supports multi-batch retrieval up to 7+ days (2016+ candles).
         Returns pandas DataFrame with datetime index and typed float columns.
         """
         now = time.time()
@@ -79,14 +80,47 @@ class MarketDataCollector:
                 return cache_entry["data"].copy()
 
         url = f"{BINANCE_SPOT_API}/klines"
-        params = {"symbol": self.symbol, "interval": timeframe, "limit": limit}
         try:
-            resp = await self.client.get(url, params=params)
-            if resp.status_code == 200:
-                raw_data = resp.json()
-                df = self._parse_kline_data(raw_data)
-                self._kline_cache[cache_key] = {"data": df, "timestamp": now}
-                return df.copy()
+            if limit <= 1000:
+                params = {"symbol": self.symbol, "interval": timeframe, "limit": limit}
+                resp = await self.client.get(url, params=params)
+                if resp.status_code == 200:
+                    raw_data = resp.json()
+                    df = self._parse_kline_data(raw_data)
+                    self._kline_cache[cache_key] = {"data": df, "timestamp": now}
+                    return df.copy()
+            else:
+                # Multi-batch chunking to get 7 full days of history (e.g., 2016 candles for 5m)
+                all_raw_data = []
+                remaining = limit
+                end_time = None
+
+                while remaining > 0:
+                    batch_size = min(1000, remaining)
+                    params = {"symbol": self.symbol, "interval": timeframe, "limit": batch_size}
+                    if end_time:
+                        params["endTime"] = end_time
+
+                    resp = await self.client.get(url, params=params)
+                    if resp.status_code != 200:
+                        break
+
+                    batch = resp.json()
+                    if not batch:
+                        break
+
+                    all_raw_data = batch + all_raw_data
+                    remaining -= len(batch)
+                    end_time = batch[0][0] - 1  # 1 ms before oldest candle in this batch
+
+                    if len(batch) < batch_size:
+                        break
+
+                if all_raw_data:
+                    df = self._parse_kline_data(all_raw_data)
+                    self._kline_cache[cache_key] = {"data": df, "timestamp": now}
+                    return df.copy()
+
         except Exception as e:
             logger.warning(f"Error fetching klines {timeframe} for {self.symbol}: {e}. Generating fallback.")
 
@@ -122,6 +156,10 @@ class MarketDataCollector:
         df["open_time"] = pd.to_datetime(df["open_time"], unit="ms")
         df["close_time"] = pd.to_datetime(df["close_time"], unit="ms")
         df["timestamp"] = df["open_time"].astype(np.int64) // 10**6
+        
+        # Deduplicate and ensure strict chronological order
+        df.drop_duplicates(subset=["timestamp"], keep="last", inplace=True)
+        df.sort_values(by="timestamp", ascending=True, inplace=True)
         df.set_index("open_time", inplace=True)
         return df
 
