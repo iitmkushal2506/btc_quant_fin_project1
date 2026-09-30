@@ -216,26 +216,16 @@ body {
     gap: 8px;
     background: var(--bg-surface);
     border: 1px solid var(--border-subtle);
-    padding: 6px 12px;
+    padding: 5px 12px;
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
-    min-width: 320px;
 }
 
 .music-track-info {
     display: flex;
     flex-direction: column;
-    flex: 1;
-    min-width: 140px;
+    max-width: 170px;
     overflow: hidden;
-    gap: 3px;
-}
-
-.music-title-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 6px;
 }
 
 .music-title {
@@ -245,7 +235,6 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     color: var(--text-primary);
-    max-width: 140px;
 }
 
 .music-folder-tag {
@@ -253,50 +242,6 @@ body {
     color: var(--color-blue);
     font-weight: 700;
     font-family: var(--font-mono);
-    white-space: nowrap;
-}
-
-.music-seek-container {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    width: 100%;
-}
-
-.music-time-text {
-    font-size: 9px;
-    font-weight: 700;
-    font-family: var(--font-mono);
-    color: var(--text-muted);
-    min-width: 26px;
-    text-align: center;
-}
-
-.music-seek-bar {
-    flex: 1;
-    height: 4px;
-    appearance: none;
-    -webkit-appearance: none;
-    background: #e2e8f0;
-    border-radius: 2px;
-    outline: none;
-    cursor: pointer;
-    accent-color: var(--color-blue);
-}
-
-.music-seek-bar::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--color-blue);
-    cursor: pointer;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-    transition: transform 0.1s ease;
-}
-
-.music-seek-bar::-webkit-slider-thumb:hover {
-    transform: scale(1.25);
 }
 
 .music-ctrl-btn {
@@ -334,17 +279,38 @@ body {
 .music-vol-group {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     flex-shrink: 0;
+    margin-left: 4px;
+    padding-left: 6px;
+    border-left: 1px solid var(--border-subtle);
 }
 
-.vol-icon {
-    font-size: 10px;
-    opacity: 0.7;
+.music-mute-btn {
+    background: transparent;
+    border: none;
+    font-size: 13px;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-fast);
+}
+
+.music-mute-btn:hover {
+    background: var(--bg-surface-subtle);
+    transform: scale(1.1);
+}
+
+.music-mute-btn.muted {
+    opacity: 0.6;
+    color: var(--color-red);
 }
 
 .music-vol {
-    width: 45px;
+    width: 50px;
     height: 4px;
     accent-color: var(--color-blue);
     cursor: pointer;
