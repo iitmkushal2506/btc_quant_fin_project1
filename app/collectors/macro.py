@@ -8,7 +8,10 @@ import asyncio
 from typing import Dict, Any
 import pandas as pd
 import numpy as np
-import yfinance as yf
+try:
+    import yfinance as yf
+except ImportError:
+    yf = None
 
 from app.config import MACRO_TICKERS, CACHE_TTL
 
@@ -34,6 +37,8 @@ class MacroCollector:
             return self._generate_fallback_macro()
 
     def _fetch_macro_sync(self) -> Dict[str, Any]:
+        if yf is None:
+            return self._generate_fallback_macro()
         tickers = list(MACRO_TICKERS.values())
         # Add BTC-USD to calculate correlations
         all_tickers = tickers + ["BTC-USD"]
