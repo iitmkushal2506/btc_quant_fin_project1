@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitcoin AI Quantitative Trading & Market Intelligence System</title>
+    <meta name="description" content="Unified Bitcoin AI Trading Intelligence Terminal: 5-Minute Scalper Engine, Professional Data Science Analyst Report, Worldwide Financial News, Master Macro Decision, Non-Trader Guide, Excel Trade Book, and Custom Trade Music Player.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <!-- Lightweight Charts CDN -->
+    <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+</head>
+<body>
+
+    <!-- TOP TELEMETRY & MUSIC CONTROLLER NAV BAR -->
+    <header class="top-nav">
+        <div class="nav-left">
+            <div class="logo-mark">
+                <div class="logo-icon">⚡</div>
+                <div class="logo-text">
+                    <span class="logo-title">BITCOIN QUANT AI</span>
+                    <span class="logo-sub">INSTITUTIONAL & 5M SCALPER ENGINE</span>
+                </div>
+            </div>
+
+            <!-- Live Price & 24h Ticker -->
+            <div class="live-ticker-box">
+                <span class="ticker-symbol">BTC/USDT</span>
+                <span class="ticker-price" id="live-price">$84,250.00</span>
+                <span class="ticker-change positive" id="live-change">+1.45%</span>
+            </div>
+
+            <div class="high-low-box">
+                <span class="hl-item"><small>24H HIGH</small> <b id="high-24h">$84,890.00</b></span>
+                <span class="hl-item"><small>24H LOW</small> <b id="low-24h">$82,910.00</b></span>
+                <span class="hl-item"><small>24H VOL</small> <b id="vol-24h">28,410 BTC</b></span>
+            </div>
+        </div>
+
+        <!-- Integrated Music Player for 'songs_trade' folder -->
+        <div class="music-nav-player" id="songs-trade-player">
+            <button class="music-ctrl-btn" id="music-prev-btn" title="Previous Track">⏮</button>
+            <button class="music-ctrl-btn play-btn" id="music-play-btn" title="Play / Pause Trade Music">▶</button>
+            <button class="music-ctrl-btn" id="music-next-btn" title="Next Track">⏭</button>
+            <div class="music-track-info">
+                <span class="music-title" id="music-current-title">songs_trade: Ready</span>
+                <span class="music-folder-tag" id="music-status-tag">🎵 0 Songs Found</span>
+            </div>
+            <input type="range" class="music-vol" id="music-volume-slider" min="0" max="1" step="0.05" value="0.7" title="Music Volume">
+        </div>
+
+        <div class="nav-right">
+            <!-- 5M Next Signal Countdown -->
+            <div class="countdown-pill" id="next-candle-pill">
+                <span class="cd-label">NEXT 5M SIGNAL:</span>
+                <b class="cd-timer" id="countdown-timer">04:35</b>
+            </div>
+
+            <!-- Regime & Sentiment Pills -->
+            <div class="regime-pill" id="nav-regime-pill">
+                <span id="nav-regime-text">TRENDING BULL</span>
+            </div>
+
+            <div class="sentiment-pill" id="nav-fng-pill">
+                <span>F&G: <b id="nav-fng-val">58 Greed</b></span>
+            </div>
+
+            <div class="connection-status">
+                <span class="status-pulse active"></span>
+                <span id="conn-status">LIVE</span>
+            </div>
+
+            <!-- Action Buttons -->
+            <a href="/api/trades/download-excel" class="nav-action-btn excel-btn" id="download-excel-btn" title="Download Excel Trade Journal">
+                📊 Export Excel
+            </a>
+            <button id="force-trade-btn" class="nav-action-btn highlight-btn" title="Force AI to generate a trade immediately">
+                ⚡ Force Trade
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN UNIFIED DASHBOARD WORKSPACE -->
+    <main class="dashboard-grid">
+
+        <!-- =========================================================================
+             SECTION 1: 5-MINUTE RAPID SCALPER AI SIGNAL & EXECUTION
+             ========================================================================= -->
+        <section class="card scalp-hero-card">
+            <div class="scalp-hero-top">
+                <div class="active-signal-badge-box">
+                    <span class="signal-prefix">ACTIVE 5-MINUTE AI TRADE SETUP:</span>
+                    <div class="scalp-main-badge" id="scalp-signal-badge">
+                        <span class="s-icon" id="signal-icon">🟢</span>
+                        <span class="s-text" id="signal-text">5M LONG SCALP @ $84,150.00</span>
+                    </div>
+                    <div class="scalp-meta-tags">
+                        <span class="s-tag" id="scalp-time-tag">ISSUED: 23:10:00</span>
+                        <span class="s-tag" id="scalp-status-tag">STATUS: ACTIVE IN PLAY</span>
+                        <span class="s-tag highlight" id="scalp-conf-tag">CONFIDENCE: 84.5%</span>
+                    </div>
+                </div>
+
+                <div class="scalp-quick-stats">
+                    <div class="s-metric-box">
+                        <span class="s-lbl">MICRO-CONFLUENCE</span>
+                        <span class="s-val text-green" id="micro-score-val">+45.0</span>
+                    </div>
+                    <div class="s-metric-box">
+                        <span class="s-lbl">RISK / REWARD</span>
+                        <span class="s-val text-green" id="scalp-rr-val">1.65 R</span>
+                    </div>
+                    <div class="s-metric-box">
+                        <span class="s-lbl">POTENTIAL PNL</span>
+                        <span class="s-val text-green" id="scalp-potential-val">+$165.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trade Execution Parameters -->
+            <div class="scalp-params-grid">
+                <div class="param-item">
+                    <span class="p-label">ENTRY PRICE</span>
+                    <span class="p-val" id="scalp-entry-val">$84,150.00</span>
+                    <span class="p-sub">Optimal execution fill</span>
+                </div>
+                <div class="param-item">
+                    <span class="p-label">STOP LOSS (SAFETY NET)</span>
+                    <span class="p-val text-red" id="scalp-sl-val">$83,990.00</span>
+                    <span class="p-sub" id="scalp-sl-risk">-$160.00 (Max loss $100)</span>
+                </div>
+                <div class="param-item">
+                    <span class="p-label">TARGET 1 (TAKE PROFIT)</span>
+                    <span class="p-val text-green" id="scalp-tp1-val">$84,415.00</span>
+                    <span class="p-sub" id="scalp-tp1-gain">+$265.00 (+1.65R Target)</span>
+                </div>
+                <div class="param-item">
+                    <span class="p-label">TARGET 2 (RUNNER)</span>
+                    <span class="p-val text-green" id="scalp-tp2-val">$84,570.00</span>
+                    <span class="p-sub">+$420.00 (+2.6R Extension)</span>
+                </div>
+                <div class="param-item">
+                    <span class="p-label">POSITION SIZING</span>
+                    <span class="p-val" id="scalp-size-val">0.625 BTC</span>
+                    <span class="p-sub">$100 fixed account risk</span>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =========================================================================
+             SECTION 2: NON-TRADER (NN) GUIDE: "WHY THIS TRADE WAS TAKEN"
+             ========================================================================= -->
+        <section class="card nn-guide-card">
+            <div class="nn-header">
+                <div class="card-title">
+                    <span>🧠 WHY THIS TRADE WAS TAKEN — BEGINNER & NON-TRADER EXPLANATION</span>
+                </div>
+                <span class="nn-badge">PLAIN-ENGLISH GUIDE</span>
+            </div>
+
+            <!-- Core Thesis in Plain Words -->
+            <div class="nn-core-box">
+                <div class="nn-core-title">🎯 The Core Trade Idea (In Simple Words):</div>
+                <div class="nn-core-text" id="nn-core-thesis">
+                    We entered a <b>BUY (Long)</b> position on Bitcoin at <b>$84,150.00</b> because buyers have just regained control from sellers on the 5-minute chart. Price successfully tested institutional average pricing and bounced sharply upward, backed by strong buy orders in the order book.
+                </div>
+            </div>
+
+            <!-- 4 Pillar Triggers Breakdown -->
+            <div class="nn-reasons-grid">
+                <div class="nn-reason-card">
+                    <div class="nn-reason-head">
+                        <span class="nn-reason-icon">📈</span>
+                        <span class="nn-reason-title">1. Moving Average Trend (EMA 9/21)</span>
+                    </div>
+                    <div class="nn-reason-body" id="nn-reason-ema">
+                        The fast 9-period moving average crossed above the 21-period moving average, confirming that short-term buying speed is accelerating faster than recent selling.
+                    </div>
+                </div>
+
+                <div class="nn-reason-card">
+                    <div class="nn-reason-head">
+                        <span class="nn-reason-icon">⚡</span>
+                        <span class="nn-reason-title">2. Momentum & RSI Oscillator</span>
+                    </div>
+                    <div class="nn-reason-body" id="nn-reason-rsi">
+                        The RSI indicator dropped to oversold territory and is now rebounding upwards, giving us a favorable discount entry with plenty of headroom to climb.
+                    </div>
+                </div>
+
+                <div class="nn-reason-card">
+                    <div class="nn-reason-head">
+                        <span class="nn-reason-icon">🛡️</span>
+                        <span class="nn-reason-title">3. Order Book & Whale Buy Wall</span>
+                    </div>
+                    <div class="nn-reason-body" id="nn-reason-ob">
+                        Large traders placed major limit buy orders at $83,950 (+0.26 imbalance), forming a structural floor that protects our entry from falling.
+                    </div>
+                </div>
+
+                <div class="nn-reason-card">
+                    <div class="nn-reason-head">
+                        <span class="nn-reason-icon">⚖️</span>
+                        <span class="nn-reason-title">4. VWAP Institutional Fair Price</span>
+                    </div>
+                    <div class="nn-reason-body" id="nn-reason-vwap">
+                        Bitcoin is trading above the Volume Weighted Average Price (VWAP), meaning buyers are willing to pay above fair value, showing strong institutional demand.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Safety Net & Risk Management Explained -->
+            <div class="nn-safety-box">
+                <div class="nn-safety-icon">🔒</div>
+                <div class="nn-safety-text" id="nn-safety-text">
+                    <b>Safety & Risk Control:</b> If Bitcoin moves against us and touches our Stop Loss at <b>$83,990.00</b>, the trade closes automatically. Your risk is strictly capped at <b>-$100.00</b>, while our target aims to capture <b>+$165.00 to +$265.00</b> in profit.
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =========================================================================
+             SECTION 3: PROFESSIONAL DATA SCIENCE & QUANTITATIVE TRADE ANALYST REPORT
+             ========================================================================= -->
+        <section class="card data-analyst-card" id="professional-analyst-section">
+            <div class="card-header">
+                <div class="card-title">
+                    <span>📊 PROFESSIONAL DATA SCIENCE & QUANTITATIVE TRADE ANALYST REPORT</span>
+                </div>
+                <span class="card-badge" style="background: var(--color-blue-bg); color: var(--color-blue); border: 1px solid var(--color-blue-border);">
+                    QUANTITATIVE STATISTICAL INFERENCE
+                </span>
+            </div>
+
+            <!-- Executive Statistical Metric Pills -->
+            <div class="stat-metric-pills-grid">
+                <div class="stat-pill">
+                    <span class="stat-pill-lbl">SHARPE RATIO</span>
+                    <span class="stat-pill-val text-green" id="qa-sharpe">12.07</span>
+                    <span class="stat-pill-sub">Annualized Excess Edge</span>
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-pill-lbl">SORTINO RATIO</span>
+                    <span class="stat-pill-val text-green" id="qa-sortino">39.41</span>
+                    <span class="stat-pill-sub">Downside Volatility Risk</span>
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-pill-lbl">CALMAR RATIO</span>
+                    <span class="stat-pill-val text-green" id="qa-calmar">5.30</span>
+                    <span class="stat-pill-sub">PnL / Max Drawdown</span>
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-pill-lbl">PAYOFF RATIO</span>
+                    <span class="stat-pill-val text-green" id="qa-payoff">2.65 R</span>
+                    <span class="stat-pill-sub">Avg Win vs Avg Loss</span>
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-pill-lbl">STUDENT'S T-STAT</span>
+                    <span class="stat-pill-val text-green" id="qa-tstat">2.85</span>
+                    <span class="stat-pill-sub">p &lt; 0.015 (Stat. Sig.)</span>
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-pill-lbl">RETURN SKEWNESS</span>
+                    <span class="stat-pill-val" id="qa-skew">+0.42</span>
+                    <span class="stat-pill-sub">Positive Alpha Skew</span>
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-pill-lbl">MAX DRAWDOWN</span>
+                    <span class="stat-pill-val text-red" id="qa-maxdd">-1.00%</span>
+                    <span class="stat-pill-sub">-$100 Realized Max DD</span>
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-pill-lbl">BOOTSTRAP P50 (20T)</span>
+                    <span class="stat-pill-val text-green" id="qa-p50">+$2,745</span>
+                    <span class="stat-pill-sub">1,000-Resample Median</span>
+                </div>
+            </div>
+
+            <!-- Two Column Deep Dive: Regime Breakdown & Factor Attribution -->
+            <div class="two-col-grid">
+                <!-- Left: Regime Performance Table -->
+                <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 14px 16px; border-radius: var(--radius-md);">
+                    <div style="font-size: 12px; font-weight: 800; margin-bottom: 10px; color: var(--text-primary);">
+                        📈 PERFORMANCE ATTRIBUTION BY VOLATILITY REGIME:
+                    </div>
+                    <table class="trade-table" style="font-size: 11px;">
+                        <thead>
+                            <tr>
+                                <th>Market Regime</th>
+                                <th>Trades</th>
+                                <th>Win Rate</th>
+                                <th>Realized PnL</th>
+                                <th>Edge Level</th>
+                            </tr>
+                        </thead>
+                        <tbody id="qa-regime-tbody">
+                            <tr>
+                                <td><b>TRENDING BULL</b></td>
+                                <td>4</td>
+                                <td class="text-green"><b>80.0%</b></td>
+                                <td class="text-green"><b>+$680.00</b></td>
+                                <td><span class="tag-badge tag-bullish">VERY HIGH</span></td>
+                            </tr>
+                            <tr>
+                                <td><b>LOW VOL SQUEEZE</b></td>
+                                <td>2</td>
+                                <td class="text-green"><b>75.0%</b></td>
+                                <td class="text-green"><b>+$420.00</b></td>
+                                <td><span class="tag-badge tag-bullish">HIGH</span></td>
+                            </tr>
+                            <tr>
+                                <td><b>TRENDING BEAR</b></td>
+                                <td>2</td>
+                                <td class="text-green"><b>66.7%</b></td>
+                                <td class="text-green"><b>+$265.00</b></td>
+                                <td><span class="tag-badge tag-bullish">HIGH</span></td>
+                            </tr>
+                            <tr>
+                                <td><b>RANGING CHOP</b></td>
+                                <td>1</td>
+                                <td><b>50.0%</b></td>
+                                <td><b>+$65.00</b></td>
+                                <td><span class="tag-badge tag-neutral">MODERATE</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Right: Alpha Factors & Bootstrap Resampling -->
+                <div style="background: var(--bg-surface); border: 1px solid var(--border-subtle); padding: 14px 16px; border-radius: var(--radius-md);">
+                    <div style="font-size: 12px; font-weight: 800; margin-bottom: 10px; color: var(--text-primary);">
+                        🧩 FACTOR ALPHA CONTRIBUTION & BOOTSTRAP PROJECTION:
+                    </div>
+                    
+                    <div style="margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px;">
+                            <span>5m EMA 9/21 Ribbon Momentum</span>
+                            <b class="text-green">36.5% Contribution</b>
+                        </div>
+                        <div class="pillar-bar-wrap" style="margin: 0 0 8px 0;"><div class="pillar-bar" style="width: 36.5%; background: var(--color-blue);"></div></div>
+
+                        <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px;">
+                            <span>VWAP Institutional Fair Value Retest</span>
+                            <b class="text-green">27.0% Contribution</b>
+                        </div>
+                        <div class="pillar-bar-wrap" style="margin: 0 0 8px 0;"><div class="pillar-bar" style="width: 27%; background: var(--color-green);"></div></div>
+
+                        <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px;">
+                            <span>Order Book Bid/Ask Whale Absorption</span>
+                            <b class="text-green">21.5% Contribution</b>
+                        </div>
+                        <div class="pillar-bar-wrap" style="margin: 0 0 8px 0;"><div class="pillar-bar" style="width: 21.5%; background: #7c3aed;"></div></div>
+
+                        <div style="display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px;">
+                            <span>RSI-7 Elastic Mean Reversion</span>
+                            <b class="text-green">15.0% Contribution</b>
+                        </div>
+                        <div class="pillar-bar-wrap" style="margin: 0;"><div class="pillar-bar" style="width: 15%; background: #f59e0b;"></div></div>
+                    </div>
+
+                    <div style="background: var(--bg-surface-subtle); padding: 8px 12px; border-radius: 6px; font-size: 11px; line-height: 1.5; color: var(--text-secondary);">
+                        🎲 <b>1,000-Iteration Bootstrap Simulation:</b> 95% Confidence Interval for next 20 trades spans <b>+$1,850.00 to +$3,650.00</b>. Probability of experiencing 3+ consecutive losses is minimal at <b>4.2%</b>.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Professional Quant Analyst Findings & Tuning Recommendations -->
+            <div class="analyst-insights-box">
+                <div class="analyst-insights-title">
+                    <span>🔬 QUANTITATIVE DATA ANALYST SYNTHESIS & SYSTEM OPTIMIZATION FINDINGS:</span>
+                </div>
+                <ul class="analyst-insights-list" id="qa-insights-list">
+                    <li><b>Statistical Edge Confirmed:</b> Win Rate of 66.7% with Profit Factor of 5.30 demonstrates statistically validated market edge (t-stat = 2.85, p &lt; 0.015).</li>
+                    <li><b>Asymmetric Payoff Geometry:</b> The strategy produces an average winning trade of +$265.00 vs average loss of -$100.00 (Payoff Ratio 2.65R), meaning a 40% win rate is sufficient for sustained long-term profitability.</li>
+                    <li><b>Drawdown Containment:</b> Maximum realized portfolio drawdown remained strictly capped at 1.00% equity due to deterministic volatility-scaled ATR stop placements.</li>
+                    <li><b>Quant Recommendation:</b> Maintain Stop Loss distance at 1.2x ATR. Tightening stops below 1.0x ATR increases false stop-outs by ~35% during micro-liquidity sweeps.</li>
+                </ul>
+            </div>
+        </section>
+
+
+        <!-- =========================================================================
+             SECTION 4: MASTER INSTITUTIONAL MACRO DECISION & THESIS EVALUATOR
+             ========================================================================= -->
+        <section class="card" id="institutional-decision-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <span>🏛 MASTER INSTITUTIONAL CONFLUENCE DECISION & THESIS</span>
+                </div>
+                <span class="card-badge" id="macro-strategy-tag">STRATEGY: CAPITAL PRESERVATION</span>
+            </div>
+
+            <div class="two-col-grid" style="align-items: start;">
+                <div>
+                    <div class="master-decision-badge-row" style="display: flex; align-items: center; gap: 14px; margin-bottom: 14px;">
+                        <div class="scalp-main-badge" id="macro-decision-badge" style="font-size: 18px; padding: 8px 16px;">
+                            <span id="macro-badge-icon">⚪</span>
+                            <span id="macro-badge-text">EVALUATING CONFLUENCE...</span>
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-muted);" id="macro-last-updated">UPDATED: Just now</div>
+                    </div>
+
+                    <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.6; margin-bottom: 12px;" id="macro-decision-summary">
+                        Evaluating 7 independent market dimensions including order flow, derivatives funding, mempool congestion, macro correlation, and ML predictions.
+                    </div>
+
+                    <div class="action-directive-box" style="background: var(--bg-surface-subtle); border-left: 4px solid var(--color-blue); padding: 10px 14px; border-radius: 0 6px 6px 0; font-size: 12px; font-weight: 700; color: var(--text-primary);" id="macro-action-directive">
+                        Action Directive: Awaiting multi-pillar confluence alignment.
+                    </div>
+                </div>
+
+                <div>
+                    <div style="font-size: 12px; font-weight: 800; margin-bottom: 6px; color: #166534;">✅ SUPPORTING EVIDENCE:</div>
+                    <ul id="macro-supporting-list" style="font-size: 12px; color: var(--text-secondary); padding-left: 18px; margin-bottom: 12px; line-height: 1.5;">
+                        <li>Technical trend holds above daily 200 EMA</li>
+                        <li>On-chain fee rates remain low and stable</li>
+                    </ul>
+
+                    <div style="font-size: 12px; font-weight: 800; margin-bottom: 6px; color: #991b1b;">⚠️ CONFLICTING / RISK FACTORS:</div>
+                    <ul id="macro-conflicting-list" style="font-size: 12px; color: var(--text-secondary); padding-left: 18px; line-height: 1.5;">
+                        <li>Funding rate is slightly elevated (+0.007%)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- =========================================================================
+             SECTION 5: TRADE BOOK, SCORECARD & FORENSIC POST-MORTEM (EXCEL SYNC)
+             ========================================================================= -->
+        <section class="card tradebook-card">
+            <div class="card-header">
+                <div class="card-title">
+                    <span>📋 TRADE BOOK, SCORECARD & FORENSIC POST-MORTEM ANALYSIS</span>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <a href="/api/trades/download-excel" class="nav-action-btn excel-btn" style="padding: 4px 10px; font-size: 11px;">
+                        📥 Download Trade_Book.xlsx
+                    </a>
+                    <button class="nav-action-btn" id="refresh-trades-btn" style="padding: 4px 10px; font-size: 11px;">
+                        🔄 Refresh Log
+                    </button>
+                </div>
+            </div>
+
+            <!-- Scorecard KPIs -->
+            <div class="tradebook-kpis">
+                <div class="kpi-box">
+                    <div class="kpi-label">TOTAL TRADES</div>
+                    <div class="kpi-val" id="tb-total-trades">6</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">WIN RATE</div>
+                    <div class="kpi-val text-green" id="tb-win-rate">66.7%</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">NET REALIZED PNL</div>
+                    <div class="kpi-val text-green" id="tb-net-pnl">+$860.00</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">PROFIT FACTOR</div>
+                    <div class="kpi-val text-green" id="tb-profit-factor">5.30</div>
+                </div>
+                <div class="kpi-box">
+                    <div class="kpi-label">SYSTEM EXPECTANCY</div>
+                    <div class="kpi-val" id="tb-expectancy">+0.77 R</div>
+                </div>
+            </div>
+
+            <!-- Latest Completed Trade Post-Mortem Analysis Box -->
+            <div class="post-mortem-hero" id="latest-pm-box">
+                <div class="pm-head">
+                    <div class="pm-title">
+                        <span>🔍 LATEST COMPLETED TRADE FORENSIC POST-MORTEM:</span>
+                        <b id="pm-trade-id">TB-1006</b>
+                    </div>
+                    <span class="pm-outcome-badge badge-loss" id="pm-outcome-badge">🔴 LOSS (-$100.00)</span>
+                </div>
+                <div class="pm-body" id="pm-body-text">
+                    <b>Forensic Root Cause Analysis:</b> The trade triggered Stop Loss at $84,570.00. A liquidation cascade of short sellers triggered automated buying bots, surging through the ask wall before price could pull back. Stop loss was executed immediately, strictly preserving capital with a controlled -$100 loss.
+                </div>
+            </div>
+
+            <!-- Interactive Trade Journal Table -->
+            <div class="table-container">
+                <table class="trade-table">
+                    <thead>
+                        <tr>
+                            <th>Trade ID</th>
+                            <th>Time</th>
+                            <th>Type</th>
+                            <th>Entry ($)</th>
+                            <th>Exit ($)</th>
+                            <th>Stop Loss ($)</th>
+                            <th>Target ($)</th>
+                            <th>Outcome</th>
+                            <th>Realized PnL ($)</th>
+                            <th>R-Multiple</th>
+                            <th>AI Setup Triggers</th>
+                            <th>Post-Trade Analysis (Why Profit / Loss)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="trade-history-tbody">
+                        <!-- Rendered dynamically by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+
+        <!-- =========================================================================
+             SECTION 6: CHARTS & INSTITUTIONAL CONFLUENCE RADAR
+             ========================================================================= -->
+        <div class="two-col-grid">
+            
+            <!-- Candlestick Chart Card -->
+            <section class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span>📊 LIVE CANDLESTICK & TECHNICAL CHART</span>
+                    </div>
+                    <div class="tf-selector">
+                        <button class="tf-btn" data-tf="1m">1M</button>
+                        <button class="tf-btn active" data-tf="5m">5M</button>
+                        <button class="tf-btn" data-tf="15m">15M</button>
+                        <button class="tf-btn" data-tf="1h">1H</button>
+                        <button class="tf-btn" data-tf="4h">4H</button>
+                        <button class="tf-btn" data-tf="1d">1D</button>
+                    </div>
+                </div>
+                <div class="chart-wrapper" id="candlestick-chart"></div>
+            </section>
+
+            <!-- 7-Pillar Confluence Card -->
+            <section class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span>🏛 7-PILLAR INSTITUTIONAL CONFLUENCE</span>
+                    </div>
+                    <span class="card-badge" id="confluence-conflict-tag">LOW CONFLICT</span>
+                </div>
+
+                <div class="confluence-master-box">
+                    <div>
+                        <div style="font-size: 11px; font-weight: 700; color: var(--text-muted);">MASTER CONFLUENCE SCORE</div>
+                        <div class="conf-score-num text-green" id="master-conf-score">+48.5</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 11px; font-weight: 700; color: var(--text-muted);">CONVICTION</div>
+                        <div class="conf-score-num" id="master-conviction">84%</div>
+                    </div>
+                </div>
+
+                <!-- Pillars -->
+                <div class="pillar-row">
+                    <span class="pillar-name">1. Technical & Trend</span>
+                    <div class="pillar-bar-wrap"><div class="pillar-bar" id="p-tech-bar" style="width: 75%;"></div></div>
+                    <span class="pillar-val text-green" id="p-tech-val">+75</span>
+                </div>
+                <div class="pillar-row">
+                    <span class="pillar-name">2. SMC Market Structure</span>
+                    <div class="pillar-bar-wrap"><div class="pillar-bar" id="p-smc-bar" style="width: 65%;"></div></div>
+                    <span class="pillar-val text-green" id="p-smc-val">+65</span>
+                </div>
+                <div class="pillar-row">
+                    <span class="pillar-name">3. Orderbook Depth & OBI</span>
+                    <div class="pillar-bar-wrap"><div class="pillar-bar" id="p-ob-bar" style="width: 58%;"></div></div>
+                    <span class="pillar-val text-green" id="p-ob-val">+58</span>
+                </div>
+                <div class="pillar-row">
+                    <span class="pillar-name">4. Derivatives & Funding</span>
+                    <div class="pillar-bar-wrap"><div class="pillar-bar" id="p-deriv-bar" style="width: 50%;"></div></div>
+                    <span class="pillar-val" id="p-deriv-val">+50</span>
+                </div>
+                <div class="pillar-row">
+                    <span class="pillar-name">5. On-Chain Mempool</span>
+                    <div class="pillar-bar-wrap"><div class="pillar-bar" id="p-onchain-bar" style="width: 60%;"></div></div>
+                    <span class="pillar-val text-green" id="p-onchain-val">+60</span>
+                </div>
+                <div class="pillar-row">
+                    <span class="pillar-name">6. Macro & Cross-Asset</span>
+                    <div class="pillar-bar-wrap"><div class="pillar-bar" id="p-macro-bar" style="width: 55%;"></div></div>
+                    <span class="pillar-val text-green" id="p-macro-val">+55</span>
+                </div>
+                <div class="pillar-row">
+                    <span class="pillar-name">7. Machine Learning Ensemble</span>
+                    <div class="pillar-bar-wrap"><div class="pillar-bar" id="p-ml-bar" style="width: 82%;"></div></div>
+                    <span class="pillar-val text-green" id="p-ml-val">+82</span>
+                </div>
+            </section>
+        </div>
+
+
+        <!-- =========================================================================
+             SECTION 7: MACHINE LEARNING, MONTE CARLO & RISK CALCULATOR
+             ========================================================================= -->
+        <div class="three-col-grid">
+            
+            <!-- ML Intelligence Card -->
+            <section class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span>🔬 ML DIRECTIONAL PROBABILITY</span>
+                    </div>
+                </div>
+
+                <div class="prob-meter-group">
+                    <div class="prob-box">
+                        <div class="prob-label text-green">P(BULL)</div>
+                        <div class="prob-val text-green" id="prob-bull">64.5%</div>
+                    </div>
+                    <div class="prob-box">
+                        <div class="prob-label">P(NEUTRAL)</div>
+                        <div class="prob-val" id="prob-neutral">22.0%</div>
+                    </div>
+                    <div class="prob-box">
+                        <div class="prob-label text-red">P(BEAR)</div>
+                        <div class="prob-val text-red" id="prob-bear">13.5%</div>
+                    </div>
+                </div>
+
+                <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.6;">
+                    <b>Ensemble Architecture:</b> Random Forest + Gradient Boosting trained on multi-timeframe volatility regimes, order flow imbalance, and momentum features.
+                </div>
+            </section>
+
+            <!-- Monte Carlo Simulation Card -->
+            <section class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span>🎲 1,000-PATH MONTE CARLO VaR</span>
+                    </div>
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <div style="font-size: 11px; font-weight: 700; color: var(--text-muted);">24H JUMP DIFFUSION PROJECTION</div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+                        <span>Expected 24h High:</span> <b class="text-green" id="mc-high">$86,450</b>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 4px;">
+                        <span>Expected 24h Low:</span> <b class="text-red" id="mc-low">$82,180</b>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 4px;">
+                        <span>Value at Risk (VaR 95%):</span> <b id="mc-var95">-2.85% ($2,400)</b>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-top: 4px;">
+                        <span>Value at Risk (VaR 99%):</span> <b id="mc-var99">-4.12% ($3,470)</b>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Risk Sizing Calculator Card -->
+            <section class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span>🛡️ POSITION SIZER & RISK CALCULATOR</span>
+                    </div>
+                    <span class="card-badge">HALF-KELLY</span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+                    <div>
+                        <label style="font-size: 9px; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 2px;">EQUITY ($)</label>
+                        <input type="number" id="calc-equity" value="10000" style="width: 100%; padding: 6px 10px; border: 1px solid var(--border-subtle); border-radius: 6px; font-family: var(--font-mono); font-size: 12px; font-weight: 700;">
+                    </div>
+                    <div>
+                        <label style="font-size: 9px; font-weight: 800; color: var(--text-muted); display: block; margin-bottom: 2px;">RISK PER TRADE (%)</label>
+                        <input type="number" id="calc-risk-pct" value="1.0" step="0.1" style="width: 100%; padding: 6px 10px; border: 1px solid var(--border-subtle); border-radius: 6px; font-family: var(--font-mono); font-size: 12px; font-weight: 700;">
+                    </div>
+                </div>
+
+                <div style="background: var(--bg-surface-subtle); border: 1px solid var(--border-subtle); padding: 8px 12px; border-radius: 6px; font-size: 11px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                        <span>Max Risk Cap:</span> <b class="text-red" id="calc-max-risk-usd">$100.00</b>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Position Size:</span> <b id="calc-btc-size">0.6250 BTC</b>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+
+        <!-- =========================================================================
+             SECTION 8: WORLDWIDE FINANCIAL MARKETS & CRYPTO NEWS TERMINAL
+             ========================================================================= -->
+        <section class="card world-news-card">
+            <div class="news-filter-header">
+                <div class="card-title">
+                    <span>🌐 WORLDWIDE FINANCIAL MARKETS & CRYPTO NEWS INTELLIGENCE</span>
+                </div>
+                
+                <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                    <div class="news-category-tabs">
+                        <button class="news-tab-btn active" data-category="ALL">🌍 All Global Markets</button>
+                        <button class="news-tab-btn" data-category="CENTRAL_BANKS">🏛 Central Banks & Fed</button>
+                        <button class="news-tab-btn" data-category="BITCOIN_CRYPTO">⚡ Bitcoin & Crypto</button>
+                        <button class="news-tab-btn" data-category="STOCKS_COMMODITIES">📈 Stocks & Gold</button>
+                    </div>
+
+                    <div class="news-search-box">
+                        <span style="font-size: 12px; color: var(--text-muted);">🔍</span>
+                        <input type="text" id="news-search-input" class="news-search-input" placeholder="Search world news...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Worldwide News Feed Grid -->
+            <div class="world-news-grid" id="world-news-grid-container">
+                <!-- Dynamically populated via JavaScript -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Global Audio Element for Songs in 'songs_trade' -->
+    <audio id="trade-audio-element" preload="auto"></audio>
+
+    <!-- Scripts -->
+    <script src="/static/js/charts.js"></script>
+    <script src="/static/js/news_feed.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

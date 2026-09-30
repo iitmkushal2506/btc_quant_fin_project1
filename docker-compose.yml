@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  bitcoin-ai:
+    build: .
+    container_name: bitcoin_ai_engine
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - HOST=0.0.0.0
+      # Optional: Telegram Alerts to receive 24x7 phone notifications
+      # - TELEGRAM_BOT_TOKEN=your_bot_token_here
+      # - TELEGRAM_CHAT_ID=your_chat_id_here
+      # Optional: Discord Webhook
+      # - DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/...
+    volumes:
+      - ./songs_trade:/app/songs_trade
+      - ./trade_book.xlsx:/app/trade_book.xlsx
