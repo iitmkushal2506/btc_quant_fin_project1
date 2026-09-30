@@ -184,6 +184,14 @@ class ScalpEngine:
             if closed:
                 # Record to TradeBook and Excel
                 self.trade_book.record_completed_trade(trade)
+                
+                # Broadcast Instant Close Alert (Profit or Loss Result)
+                try:
+                    import asyncio
+                    from app.services.alert_bot import cloud_alert_service
+                    asyncio.create_task(cloud_alert_service.broadcast_trade_closed(trade))
+                except Exception as e:
+                    logger.debug(f"Cloud alert close broadcast: {e}")
 
         # 5. Generate new trade setup if needed
         if not self.active_trade or self.active_trade.get("status") == "CLOSED" or (now - self.last_signal_time) >= 280:
@@ -230,11 +238,22 @@ class ScalpEngine:
             self.active_trade = new_trade
             self.last_signal_time = now
 
-            # Broadcast to 24/7 Telegram / Discord Mobile Push Alerts
+            # Broadcast to 24/7 Telegram / Discord Mobile Push Alerts with previous trade & news
             try:
                 import asyncio
                 from app.services.alert_bot import cloud_alert_service
-                asyncio.create_task(cloud_alert_service.broadcast_trade_signal(new_trade))
+                from app.collectors.news_collector import news_collector
+                
+                prev_trade = self.trade_book.trades[0] if self.trade_book.trades else None
+                cached_news = news_collector._cache.get("data", {}).get("articles", []) if news_collector._cache else []
+                if not cached_news:
+                    cached_news = news_collector._generate_fallback_news()
+                
+                asyncio.create_task(cloud_alert_service.broadcast_trade_signal(
+                    trade=new_trade,
+                    previous_trade=prev_trade,
+                    latest_news=cached_news[:2]
+                ))
             except Exception as e:
                 logger.debug(f"Cloud alert broadcast: {e}")
 

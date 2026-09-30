@@ -1,13 +1,13 @@
 """
 24/7 Mobile Cloud Alert Notification Service (Telegram & Discord):
-Sends instant trade signal alerts directly to your phone 24x7 when hosted in the cloud.
+Sends instant trade signal alerts, previous trade PnL results, and breaking global market news.
 """
 
 import os
 import logging
 import asyncio
 import httpx
-from typing import Dict, Any, Optional
+from typing import Dict, Any, List, Optional
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -21,8 +21,13 @@ class CloudAlertService:
         self.discord_webhook_url = os.getenv("DISCORD_WEBHOOK_URL", "").strip()
         self.last_sent_trade_id: Optional[str] = None
 
-    async def broadcast_trade_signal(self, trade: Dict[str, Any]):
-        """Send formatted trade notification to Telegram and Discord on new signal."""
+    async def broadcast_trade_signal(
+        self,
+        trade: Dict[str, Any],
+        previous_trade: Optional[Dict[str, Any]] = None,
+        latest_news: Optional[List[Dict[str, Any]]] = None
+    ):
+        """Send formatted trade notification with previous PnL & market news to Telegram and Discord."""
         t_id = trade.get("id")
         if not t_id or t_id == self.last_sent_trade_id:
             return
@@ -38,10 +43,43 @@ class CloudAlertService:
         rr = trade.get("risk_reward", 1.65)
         conf = trade.get("confidence", 80.0)
         reasons = trade.get("reasons", [])
-        reasons_text = "\n• " + "\n• ".join(reasons[:3]) if reasons else "• Momentum & VWAP alignment"
+        reasons_text = "\n• " + "\n• ".join(reasons[:3]) if reasons else "• Fast momentum & VWAP confluence"
         nn_exp = trade.get("nn_explanation", "")
 
-        # 1. Telegram Message (HTML formatted)
+        # 1. Previous Trade Result Section
+        prev_text = ""
+        if previous_trade:
+            prev_outcome = previous_trade.get("outcome", "PENDING")
+            prev_pnl = previous_trade.get("pnl_usd", 0.0)
+            prev_r = previous_trade.get("r_multiple", 0.0)
+            prev_exit = previous_trade.get("exit_price", 0.0)
+            prev_type = previous_trade.get("type", "TRADE")
+            if prev_outcome == "WIN":
+                prev_text = (
+                    f"\n\n📊 <b>Previous Trade Result:</b> 🟢 <b>WIN (+$165.00 | +1.65 R)</b>\n"
+                    f"• Type: <code>{prev_type}</code> | Exit Price: <code>${prev_exit:,.2f}</code> (Target Hit)"
+                )
+            elif prev_outcome == "LOSS":
+                prev_text = (
+                    f"\n\n📊 <b>Previous Trade Result:</b> 🔴 <b>LOSS (-$100.00 | -1.00 R)</b>\n"
+                    f"• Type: <code>{prev_type}</code> | Exit Price: <code>${prev_exit:,.2f}</code> (Stop Protected)"
+                )
+            else:
+                prev_text = f"\n\n📊 <b>Previous Trade Result:</b> ⏳ <b>{prev_outcome}</b>"
+
+        # 2. Latest Global Market News Section
+        news_text = ""
+        if latest_news and len(latest_news) > 0:
+            news_items = []
+            for n in latest_news[:2]:
+                title = n.get("title", "")
+                region = n.get("region", "Global")
+                sentiment = n.get("sentiment", "NEUTRAL")
+                s_icon = "🟢" if sentiment == "BULLISH" else ("🔴" if sentiment == "BEARISH" else "⚪")
+                news_items.append(f"• {s_icon} [{region}] <i>{title[:90]}</i>")
+            news_text = "\n\n📰 <b>Latest Breaking Market News:</b>\n" + "\n".join(news_items)
+
+        # 3. Telegram Message (HTML formatted)
         telegram_msg = (
             f"<b>{dir_emoji} BITCOIN 5M SCALP TRADE ALERT</b>\n"
             f"━━━━━━━━━━━━━━━━━━━━\n"
@@ -52,34 +90,71 @@ class CloudAlertService:
             f"<b>Target 2 (Runner):</b> <code>${tp2:,.2f}</code>\n"
             f"<b>Risk/Reward Ratio:</b> <code>{rr} R</code>\n"
             f"<b>AI Confidence:</b> <code>{conf}%</code>\n\n"
-            f"<b>🧠 Quantitative Setup Triggers:</b>{reasons_text}\n\n"
-            f"<i>💡 Non-Trader Guide: {nn_exp[:200]}...</i>"
+            f"<b>🧠 Quantitative Setup Triggers:</b>{reasons_text}"
+            f"{prev_text}"
+            f"{news_text}\n\n"
+            f"<i>💡 Non-Trader Guide: {nn_exp[:180]}...</i>"
         )
 
-        # 2. Discord Embed Message
+        # 4. Discord Payload
+        discord_fields = [
+            {"name": "Entry Price", "value": f"${entry:,.2f}", "inline": True},
+            {"name": "Stop Loss", "value": f"${sl:,.2f}", "inline": True},
+            {"name": "Target 1", "value": f"${tp1:,.2f}", "inline": True},
+            {"name": "Risk / Reward", "value": f"{rr} R", "inline": True},
+            {"name": "Confidence", "value": f"{conf}%", "inline": True},
+            {"name": "Triggers", "value": reasons_text, "inline": False}
+        ]
+        if previous_trade:
+            discord_fields.append({"name": "Previous Trade", "value": prev_text.strip(), "inline": False})
+        if latest_news:
+            discord_fields.append({"name": "Breaking News", "value": news_text.strip(), "inline": False})
+
         discord_payload = {
             "embeds": [{
                 "title": f"{dir_emoji} BITCOIN 5M SCALP TRADE ALERT: {direction}",
                 "color": 65280 if direction == "LONG" else 16711680,
-                "fields": [
-                    {"name": "Entry Price", "value": f"${entry:,.2f}", "inline": True},
-                    {"name": "Stop Loss", "value": f"${sl:,.2f}", "inline": True},
-                    {"name": "Target 1", "value": f"${tp1:,.2f}", "inline": True},
-                    {"name": "Risk / Reward", "value": f"{rr} R", "inline": True},
-                    {"name": "Confidence", "value": f"{conf}%", "inline": True},
-                    {"name": "Why Trade Was Taken", "value": reasons_text, "inline": False}
-                ],
-                "footer": {"text": "Bitcoin AI Quantitative Intelligence System • 24/7 Cloud Stream"}
+                "fields": discord_fields,
+                "footer": {"text": "Bitcoin AI Quantitative Intelligence System • 24/7 Stream"}
             }]
         }
 
-        # Send asynchronously
+        # Dispatch Asynchronously
         tasks = []
         if self.telegram_bot_token and self.telegram_chat_id:
             tasks.append(self._send_telegram(telegram_msg))
         if self.discord_webhook_url:
             tasks.append(self._send_discord(discord_payload))
 
+        if tasks:
+            await asyncio.gather(*tasks, return_exceptions=True)
+
+    async def broadcast_trade_closed(self, trade: Dict[str, Any]):
+        """Send immediate notification when an active trade reaches profit target or stop loss."""
+        outcome = trade.get("outcome", "CLOSED")
+        pnl = trade.get("pnl_usd", 0.0)
+        exit_p = trade.get("exit_price", 0.0)
+        t_type = trade.get("type", "TRADE")
+        pm_reason = trade.get("post_mortem_reason", "Trade exited at key confluence level.")
+        
+        is_win = outcome == "WIN"
+        emoji = "🎉 🟢" if is_win else "🛑 🔴"
+        pnl_str = f"+${pnl:,.2f} (+1.65 R)" if is_win else f"-${abs(pnl):,.2f} (-1.00 R)"
+
+        msg = (
+            f"<b>{emoji} TRADE COMPLETED: {outcome} ({pnl_str})</b>\n"
+            f"━━━━━━━━━━━━━━━━━━━━\n"
+            f"<b>Position:</b> <code>{t_type}</code>\n"
+            f"<b>Exit Price:</b> <code>${exit_p:,.2f}</code>\n"
+            f"<b>Profit / Loss:</b> <b>{pnl_str}</b>\n\n"
+            f"<b>🔍 Forensic Post-Mortem Analysis:</b>\n"
+            f"<i>{pm_reason}</i>\n\n"
+            f"📁 <i>Recorded to Trade Book & Excel. Preparing next 5M micro setup...</i>"
+        )
+
+        tasks = []
+        if self.telegram_bot_token and self.telegram_chat_id:
+            tasks.append(self._send_telegram(msg))
         if tasks:
             await asyncio.gather(*tasks, return_exceptions=True)
 

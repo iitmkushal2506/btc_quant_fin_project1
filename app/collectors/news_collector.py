@@ -184,3 +184,5 @@ class NewsCollector:
 def re_strip(html_str: str) -> str:
     clean = re.compile('<.*?>')
     return re.sub(clean, '', html_str).strip()
+
+news_collector = NewsCollector()

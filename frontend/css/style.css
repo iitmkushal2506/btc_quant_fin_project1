@@ -64,6 +64,138 @@
     --transition-smooth: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* ==========================================================================
+   BLACK & WHITE THEME ENGINE (WHITE IS DEFAULT BASE)
+   ========================================================================== */
+
+[data-theme="dark"] {
+    /* Pure Black & Deep Obsidian Slate Palette */
+    --bg-primary: #070a12;
+    --bg-surface: #0e1526;
+    --bg-surface-elevated: #131c33;
+    --bg-surface-subtle: #17223b;
+    --bg-surface-alt: #0a0f1d;
+    
+    --border-subtle: #1e293b;
+    --border-medium: #334155;
+    --border-focus: #64748b;
+    
+    /* High-Contrast Crisp Typography */
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+
+    /* Financial State Accents in Dark Mode */
+    --color-green: #10b981;
+    --color-green-light: #34d399;
+    --color-green-bg: rgba(16, 185, 129, 0.12);
+    --color-green-border: rgba(16, 185, 129, 0.3);
+
+    --color-red: #ef4444;
+    --color-red-light: #f87171;
+    --color-red-bg: rgba(239, 68, 68, 0.12);
+    --color-red-border: rgba(239, 68, 68, 0.3);
+
+    --color-blue: #3b82f6;
+    --color-blue-light: #60a5fa;
+    --color-blue-bg: rgba(59, 130, 246, 0.15);
+    --color-blue-border: rgba(59, 130, 246, 0.35);
+
+    --color-yellow: #f59e0b;
+    --color-yellow-bg: rgba(245, 158, 11, 0.12);
+    --color-yellow-border: rgba(245, 158, 11, 0.3);
+
+    --color-purple: #8b5cf6;
+    --color-purple-bg: rgba(139, 92, 246, 0.12);
+    --color-purple-border: rgba(139, 92, 246, 0.3);
+
+    --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="dark"] body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    background-image: 
+        linear-gradient(rgba(30, 41, 59, 0.35) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(30, 41, 59, 0.35) 1px, transparent 1px);
+}
+
+[data-theme="dark"] .top-nav {
+    background: rgba(11, 16, 29, 0.94);
+    border-bottom-color: var(--border-subtle);
+}
+
+[data-theme="dark"] .scalp-hero-card {
+    background: linear-gradient(135deg, #0e1526 0%, #090e1c 100%);
+    border-color: var(--border-medium);
+}
+
+[data-theme="dark"] .data-analyst-card {
+    background: linear-gradient(135deg, #0e1526 0%, #090e1c 100%);
+    border-color: var(--border-medium);
+}
+
+[data-theme="dark"] .terminal-footer {
+    background: #0b101d;
+    border-top-color: var(--border-subtle);
+}
+
+[data-theme="dark"] .chart-wrapper {
+    background: #0e1526;
+}
+
+[data-theme="dark"] .nn-core-box {
+    background: rgba(30, 58, 138, 0.25);
+    border-left-color: #3b82f6;
+}
+
+[data-theme="dark"] .nn-core-title {
+    color: #93c5fd;
+}
+
+[data-theme="dark"] .nn-core-text {
+    color: #bfdbfe;
+}
+
+[data-theme="dark"] .post-mortem-hero {
+    background: rgba(120, 53, 15, 0.22);
+    border-color: rgba(245, 158, 11, 0.35);
+}
+
+[data-theme="dark"] .pm-title {
+    color: #fcd34d;
+}
+
+[data-theme="dark"] .pm-body {
+    color: #fef3c7;
+}
+
+[data-theme="dark"] .analyst-insights-box {
+    background: rgba(30, 58, 138, 0.22);
+    border-left-color: #3b82f6;
+}
+
+[data-theme="dark"] .analyst-insights-title {
+    color: #93c5fd;
+}
+
+[data-theme="dark"] .analyst-insights-list {
+    color: #dbeafe;
+}
+
+[data-theme="dark"] .world-news-card-item:hover {
+    background: #17223b;
+}
+
+[data-theme="dark"] .theme-toggle-btn {
+    background: var(--bg-surface-elevated);
+    border-color: var(--border-medium);
+    color: #f8fafc;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -237,11 +369,15 @@ body {
     color: var(--text-primary);
 }
 
-.music-folder-tag {
+.music-next-tag {
     font-size: 9px;
     color: var(--color-blue);
     font-weight: 700;
     font-family: var(--font-mono);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
 }
 
 .music-ctrl-btn {

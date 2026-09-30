@@ -24,13 +24,61 @@ document.addEventListener('DOMContentLoaded', () => {
     const prevBtn = document.getElementById('music-prev-btn');
     const nextBtn = document.getElementById('music-next-btn');
     const titleEl = document.getElementById('music-current-title');
-    const statusTagEl = document.getElementById('music-status-tag');
+    const nextTagEl = document.getElementById('music-next-tag');
     const volSlider = document.getElementById('music-volume-slider');
     const muteBtn = document.getElementById('music-mute-btn');
+    const themeBtn = document.getElementById('theme-toggle-btn');
+
+    // ----------------------------------------------------
+    // THEME SWITCHER: BLACK & WHITE (WHITE IS BASE DEFAULT)
+    // ----------------------------------------------------
+    function initThemeSwitcher() {
+        const savedTheme = localStorage.getItem('btc_quant_theme') || 'light';
+        applyTheme(savedTheme);
+
+        if (themeBtn) {
+            themeBtn.addEventListener('click', () => {
+                const isCurrentDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                const nextTheme = isCurrentDark ? 'light' : 'dark';
+                applyTheme(nextTheme);
+            });
+        }
+    }
+
+    function applyTheme(theme) {
+        if (theme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            localStorage.setItem('btc_quant_theme', 'dark');
+            if (themeBtn) themeBtn.textContent = '☀️ Theme: White';
+            if (chartManager && typeof chartManager.setTheme === 'function') {
+                chartManager.setTheme('dark');
+            }
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+            localStorage.setItem('btc_quant_theme', 'light');
+            if (themeBtn) themeBtn.textContent = '🌙 Theme: Black';
+            if (chartManager && typeof chartManager.setTheme === 'function') {
+                chartManager.setTheme('light');
+            }
+        }
+    }
 
     // ----------------------------------------------------
     // 2. SONGS_TRADE FOLDER MUSIC ENGINE
     // ----------------------------------------------------
+    function updateNextSongPreview() {
+        if (!songsPlaylist || songsPlaylist.length === 0) {
+            if (nextTagEl) nextTagEl.textContent = "📁 songs_trade ready";
+            return;
+        }
+        const nextIdx = (currentSongIndex + 1) % songsPlaylist.length;
+        const nextSong = songsPlaylist[nextIdx];
+        if (nextTagEl && nextSong) {
+            nextTagEl.textContent = `⏭ Next: ${nextSong.title}`;
+            nextTagEl.title = `Upcoming Track: ${nextSong.title}`;
+        }
+    }
+
     async function loadTradingSongs() {
         try {
             const resp = await fetch('/api/songs');
@@ -39,13 +87,13 @@ document.addEventListener('DOMContentLoaded', () => {
             songsPlaylist = data.songs || [];
             
             if (songsPlaylist.length > 0) {
-                statusTagEl.textContent = `🎵 ${songsPlaylist.length} Song${songsPlaylist.length > 1 ? 's' : ''} Loaded`;
                 if (!isMusicPlaying) {
                     titleEl.textContent = songsPlaylist[currentSongIndex].title;
                 }
+                updateNextSongPreview();
             } else {
-                statusTagEl.textContent = "📁 Drop songs in songs_trade/";
-                titleEl.textContent = "songs_trade: Folder Ready";
+                if (nextTagEl) nextTagEl.textContent = "📁 Empty songs_trade/";
+                titleEl.textContent = "songs_trade: Ready";
             }
         } catch (e) {
             console.debug("Songs scan:", e);
@@ -69,10 +117,12 @@ document.addEventListener('DOMContentLoaded', () => {
             isMusicPlaying = true;
             playBtn.textContent = '⏸';
             titleEl.textContent = song.title;
+            updateNextSongPreview();
         }).catch(err => {
             console.debug("Auto-play waiting for user gesture:", err);
             isMusicPlaying = false;
             playBtn.textContent = '▶';
+            updateNextSongPreview();
         });
     }
 
@@ -96,6 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 audioElement.play();
                 isMusicPlaying = true;
                 playBtn.textContent = '⏸';
+                updateNextSongPreview();
             }
         } else {
             audioElement.pause();
@@ -156,6 +207,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     loadTradingSongs();
+    initThemeSwitcher();
 
     // ----------------------------------------------------
     // 3. INITIALIZE CHART
@@ -163,6 +215,10 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
         chartManager = new ChartManager('candlestick-chart');
         chartManager.loadKlines('5m');
+        
+        // Apply current theme to chart immediately
+        const activeTheme = localStorage.getItem('btc_quant_theme') || 'light';
+        chartManager.setTheme(activeTheme);
 
         document.querySelectorAll('.tf-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {

@@ -1,6 +1,6 @@
 """
 Quick Telegram Alert Tester:
-Run this script to test your Telegram Bot Token & Chat ID.
+Run this script to test the enhanced Telegram Bot alerts with previous trade PnL & breaking news.
 """
 
 import sys
@@ -20,18 +20,32 @@ async def test_telegram_alert(token: str, chat_id: str):
     url = f"https://api.telegram.org/bot{token}/sendMessage"
     
     msg = (
-        "🟢 <b>BITCOIN AI QUANT TERMINAL - TEST NOTIFICATION</b>\n"
-        "━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
-        "✅ <b>Status:</b> Telegram Bot Connected Successfully!\n"
-        "📈 <b>Asset:</b> BTC/USDT Perpetual\n"
-        "🎯 <b>Signal Stream:</b> 24/7 Scalp & Institutional Signals Active\n"
-        "💡 <i>You will now receive all live trade setups and profit/loss updates directly on your phone!</i>"
+        "<b>🟢 BITCOIN 5M SCALP TRADE ALERT</b>\n"
+        "━━━━━━━━━━━━━━━━━━━━\n"
+        "<b>Direction:</b> 🟢 <code>LONG</code>\n"
+        "<b>Entry Price:</b> <code>$84,150.00</code>\n"
+        "<b>Stop Loss (Safety Net):</b> <code>$83,990.00</code>\n"
+        "<b>Target 1 (Take Profit):</b> <code>$84,415.00</code>\n"
+        "<b>Target 2 (Runner):</b> <code>$84,650.00</code>\n"
+        "<b>Risk/Reward Ratio:</b> <code>1.65 R</code>\n"
+        "<b>AI Confidence:</b> <code>86.5%</code>\n\n"
+        "<b>🧠 Quantitative Setup Triggers:</b>\n"
+        "• 5m EMA 9 crossed above EMA 21 (Bullish Momentum)\n"
+        "• Price bouncing from 5m VWAP ($84,120)\n"
+        "• Orderbook $4.2M Bid wall at $83,950 (+0.26 OBI)\n\n"
+        "📊 <b>Previous Trade Result:</b> 🟢 <b>WIN (+$165.00 | +1.65 R)</b>\n"
+        "• Type: <code>LONG</code> | Exit Price: <code>$84,390.00</code> (Target Hit)\n\n"
+        "📰 <b>Latest Breaking Market News:</b>\n"
+        "• 🟢 [Global] <i>Global institutional crypto ETF volume surpasses $1.2B in morning trading</i>\n"
+        "• ⚪ [US] <i>Federal Reserve balance sheet updates indicate stable liquidity reserves</i>\n\n"
+        "<i>💡 Non-Trader Guide: Fast momentum has turned upward with strong buyer wall protection...</i>"
     )
     
     payload = {
         "chat_id": chat_id,
         "text": msg,
-        "parse_mode": "HTML"
+        "parse_mode": "HTML",
+        "disable_web_page_preview": True
     }
 
     try:
@@ -39,16 +53,11 @@ async def test_telegram_alert(token: str, chat_id: str):
             res = await client.post(url, json=payload)
             data = res.json()
             if res.status_code == 200 and data.get("ok"):
-                print("🎉 SUCCESS! A test notification has been sent to your Telegram app.")
-                print("📱 Check your phone right now!\n")
+                print("🎉 SUCCESS! An enriched test alert with previous trade PnL & news has been sent to your Telegram.")
+                print("📱 Check your Telegram app!\n")
             else:
                 desc = data.get('description', res.text)
                 print(f"[-] Telegram API Error: {desc}")
-                print("\n[TIP]:")
-                if "chat not found" in desc.lower() or "blocked" in desc.lower():
-                    print(f"👉 You MUST open your bot ( https://t.me/karan_btc_signals_ex1_bot ) and click 'START' or send 'Hi' once so the bot has permission to message you!")
-                else:
-                    print("Please check that your Bot Token and Chat ID match your Telegram profile.")
     except Exception as e:
         print(f"[-] Connection Failed: {e}")
 

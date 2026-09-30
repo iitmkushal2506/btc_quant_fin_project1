@@ -106,6 +106,27 @@ class ChartManager {
         }
     }
 
+    setTheme(theme) {
+        if (!this.chart) return;
+        const isDark = theme === 'dark';
+        this.chart.applyOptions({
+            layout: {
+                background: { color: isDark ? '#0e1526' : '#ffffff' },
+                textColor: isDark ? '#94a3b8' : '#475569',
+            },
+            grid: {
+                vertLines: { color: isDark ? '#1e293b' : '#f1f5f9' },
+                horzLines: { color: isDark ? '#1e293b' : '#f1f5f9' },
+            },
+            rightPriceScale: {
+                borderColor: isDark ? '#1e293b' : '#e2e8f0',
+            },
+            timeScale: {
+                borderColor: isDark ? '#1e293b' : '#e2e8f0',
+            }
+        });
+    }
+
     async loadKlines(timeframe = '5m') {
         this.currentTimeframe = timeframe;
         try {
