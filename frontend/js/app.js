@@ -104,6 +104,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Audio Controls Listeners
+    const uploadBtn = document.getElementById('music-upload-btn');
+    const filePicker = document.getElementById('music-file-picker');
+
+    if (uploadBtn && filePicker) {
+        uploadBtn.addEventListener('click', () => filePicker.click());
+        filePicker.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files || []);
+            if (files.length > 0) {
+                const localSongs = files.map(file => ({
+                    title: file.name.replace(/\.[^/.]+$/, "").replace(/[_ -]+/g, " "),
+                    url: URL.createObjectURL(file),
+                    filename: file.name
+                }));
+                songsPlaylist = [...localSongs, ...songsPlaylist];
+                currentSongIndex = 0;
+                statusTagEl.textContent = `🎵 ${songsPlaylist.length} Loaded (${localSongs.length} local)`;
+                playSongAtIndex(0);
+            }
+        });
+    }
+
     if (playBtn) playBtn.addEventListener('click', togglePlayMusic);
     if (nextBtn) nextBtn.addEventListener('click', () => playSongAtIndex(currentSongIndex + 1));
     if (prevBtn) prevBtn.addEventListener('click', () => playSongAtIndex(currentSongIndex - 1));
