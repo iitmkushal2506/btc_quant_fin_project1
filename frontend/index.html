@@ -39,18 +39,30 @@
             </div>
         </div>
 
-        <!-- Integrated Music Player for 'songs_trade' folder -->
+        <!-- Integrated Music Player for 'songs_trade' folder with Seek Bar -->
         <div class="music-nav-player" id="songs-trade-player">
             <button class="music-ctrl-btn" id="music-prev-btn" title="Previous Track">⏮</button>
             <button class="music-ctrl-btn play-btn" id="music-play-btn" title="Play / Pause Trade Music">▶</button>
             <button class="music-ctrl-btn" id="music-next-btn" title="Next Track">⏭</button>
-            <button class="music-ctrl-btn" id="music-upload-btn" title="Select audio files directly from your phone/computer">📂</button>
+            <button class="music-ctrl-btn" id="music-upload-btn" title="Select audio files directly from your device">📂</button>
             <input type="file" id="music-file-picker" accept="audio/*" multiple style="display:none;">
+            
             <div class="music-track-info">
-                <span class="music-title" id="music-current-title">songs_trade: Ready</span>
-                <span class="music-folder-tag" id="music-status-tag">🎵 0 Songs Found</span>
+                <div class="music-title-row">
+                    <span class="music-title" id="music-current-title">songs_trade: Ready</span>
+                    <span class="music-folder-tag" id="music-status-tag">🎵 29 Songs Loaded</span>
+                </div>
+                <div class="music-seek-container">
+                    <span class="music-time-text" id="music-current-time">00:00</span>
+                    <input type="range" class="music-seek-bar" id="music-seek-bar" min="0" max="100" value="0" step="0.1" title="Seek Track">
+                    <span class="music-time-text" id="music-total-duration">00:00</span>
+                </div>
             </div>
-            <input type="range" class="music-vol" id="music-volume-slider" min="0" max="1" step="0.05" value="0.7" title="Music Volume">
+
+            <div class="music-vol-group">
+                <span class="vol-icon" title="Volume">🔊</span>
+                <input type="range" class="music-vol" id="music-volume-slider" min="0" max="1" step="0.05" value="0.7" title="Music Volume">
+            </div>
         </div>
 
         <div class="nav-right">

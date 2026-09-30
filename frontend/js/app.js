@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let songsPlaylist = [];
     let currentSongIndex = 0;
     let isMusicPlaying = false;
+    let isUserSeeking = false;
     const audioElement = document.getElementById('trade-audio-element');
     const playBtn = document.getElementById('music-play-btn');
     const prevBtn = document.getElementById('music-prev-btn');
@@ -26,6 +27,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const titleEl = document.getElementById('music-current-title');
     const statusTagEl = document.getElementById('music-status-tag');
     const volSlider = document.getElementById('music-volume-slider');
+    const seekBar = document.getElementById('music-seek-bar');
+    const currentTimeEl = document.getElementById('music-current-time');
+    const totalDurationEl = document.getElementById('music-total-duration');
+
+    function formatAudioTime(seconds) {
+        if (!seconds || isNaN(seconds) || seconds < 0) return '00:00';
+        const m = Math.floor(seconds / 60);
+        const s = Math.floor(seconds % 60);
+        return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
 
     // ----------------------------------------------------
     // 2. SONGS_TRADE FOLDER MUSIC ENGINE
@@ -64,6 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const song = songsPlaylist[currentSongIndex];
         audioElement.src = song.url;
+        if (seekBar) seekBar.value = 0;
+        if (currentTimeEl) currentTimeEl.textContent = '00:00';
         audioElement.play().then(() => {
             isMusicPlaying = true;
             playBtn.textContent = '⏸';
@@ -128,9 +141,54 @@ document.addEventListener('DOMContentLoaded', () => {
     if (playBtn) playBtn.addEventListener('click', togglePlayMusic);
     if (nextBtn) nextBtn.addEventListener('click', () => playSongAtIndex(currentSongIndex + 1));
     if (prevBtn) prevBtn.addEventListener('click', () => playSongAtIndex(currentSongIndex - 1));
+
     if (audioElement) {
+        // Update seek bar and timestamp as track plays
+        audioElement.addEventListener('timeupdate', () => {
+            if (!isUserSeeking && audioElement.duration) {
+                const current = audioElement.currentTime || 0;
+                const duration = audioElement.duration || 1;
+                const pct = (current / duration) * 100;
+                if (seekBar) seekBar.value = pct;
+                if (currentTimeEl) currentTimeEl.textContent = formatAudioTime(current);
+            }
+        });
+
+        // Set duration once audio metadata loads
+        audioElement.addEventListener('loadedmetadata', () => {
+            if (totalDurationEl && audioElement.duration) {
+                totalDurationEl.textContent = formatAudioTime(audioElement.duration);
+            }
+        });
+
+        audioElement.addEventListener('durationchange', () => {
+            if (totalDurationEl && audioElement.duration) {
+                totalDurationEl.textContent = formatAudioTime(audioElement.duration);
+            }
+        });
+
         audioElement.addEventListener('ended', () => playSongAtIndex(currentSongIndex + 1));
     }
+
+    // Interactive seek bar scrub & navigate
+    if (seekBar && audioElement) {
+        seekBar.addEventListener('input', (e) => {
+            isUserSeeking = true;
+            if (audioElement.duration) {
+                const targetSec = (parseFloat(e.target.value) / 100) * audioElement.duration;
+                if (currentTimeEl) currentTimeEl.textContent = formatAudioTime(targetSec);
+            }
+        });
+
+        seekBar.addEventListener('change', (e) => {
+            if (audioElement.duration) {
+                const targetSec = (parseFloat(e.target.value) / 100) * audioElement.duration;
+                audioElement.currentTime = targetSec;
+            }
+            isUserSeeking = false;
+        });
+    }
+
     if (volSlider && audioElement) {
         volSlider.addEventListener('input', (e) => {
             audioElement.volume = parseFloat(e.target.value);
