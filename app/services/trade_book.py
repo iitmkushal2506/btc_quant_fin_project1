@@ -232,6 +232,11 @@ class TradeBookService:
 
         self.export_to_excel()
 
+    def get_latest_closed_trade(self) -> Optional[Dict[str, Any]]:
+        """Get the most recently closed trade with forensic outcome & post-mortem analysis."""
+        closed = [t for t in self.trades if t.get("status") == "CLOSED"]
+        return closed[0] if closed else None
+
     def get_performance_metrics(self) -> Dict[str, Any]:
         """Compute holistic trading performance stats."""
         closed = [t for t in self.trades if t.get("status") == "CLOSED"]

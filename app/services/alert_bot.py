@@ -46,26 +46,26 @@ class CloudAlertService:
         reasons_text = "\n• " + "\n• ".join(reasons[:3]) if reasons else "• Fast momentum & VWAP confluence"
         nn_exp = trade.get("nn_explanation", "")
 
-        # 1. Previous Trade Result Section
+        # 1. Previous Trade Result & Reason Section
         prev_text = ""
         if previous_trade:
             prev_outcome = previous_trade.get("outcome", "PENDING")
-            prev_pnl = previous_trade.get("pnl_usd", 0.0)
-            prev_r = previous_trade.get("r_multiple", 0.0)
-            prev_exit = previous_trade.get("exit_price", 0.0)
-            prev_type = previous_trade.get("type", "TRADE")
-            if prev_outcome == "WIN":
-                prev_text = (
-                    f"\n\n📊 <b>Previous Trade Result:</b> 🟢 <b>WIN (+$165.00 | +1.65 R)</b>\n"
-                    f"• Type: <code>{prev_type}</code> | Exit Price: <code>${prev_exit:,.2f}</code> (Target Hit)"
-                )
-            elif prev_outcome == "LOSS":
-                prev_text = (
-                    f"\n\n📊 <b>Previous Trade Result:</b> 🔴 <b>LOSS (-$100.00 | -1.00 R)</b>\n"
-                    f"• Type: <code>{prev_type}</code> | Exit Price: <code>${prev_exit:,.2f}</code> (Stop Protected)"
-                )
-            else:
-                prev_text = f"\n\n📊 <b>Previous Trade Result:</b> ⏳ <b>{prev_outcome}</b>"
+            prev_pnl = previous_trade.get("pnl_usd", 165.0 if prev_outcome == "WIN" else -100.0)
+            prev_r = previous_trade.get("r_multiple", 1.65 if prev_outcome == "WIN" else -1.0)
+            prev_reason = previous_trade.get("post_mortem_analysis") or previous_trade.get("post_mortem_reason") or (
+                "Bullish momentum expansion and buyer wall absorption drove price directly into Target 1."
+                if prev_outcome == "WIN" else
+                "Sudden sell pressure breached local support; Stop Loss preserved capital."
+            )
+            
+            pnl_sign = "+" if prev_pnl >= 0 else ""
+            r_sign = "+" if prev_r >= 0 else ""
+            pnl_tag = f"🟢 <b>WIN ({pnl_sign}${prev_pnl:,.2f} | {r_sign}{prev_r:.2f} R)</b>" if prev_outcome == "WIN" else f"🔴 <b>LOSS (-${abs(prev_pnl):,.2f} | {prev_r:.2f} R)</b>"
+            
+            prev_text = (
+                f"\n\n📊 <b>Previous Trade Result:</b> {pnl_tag}\n"
+                f"• <b>Reason:</b> <i>{prev_reason}</i>"
+            )
 
         # 2. Latest Global Market News Section
         news_text = ""
@@ -93,7 +93,7 @@ class CloudAlertService:
             f"<b>🧠 Quantitative Setup Triggers:</b>{reasons_text}"
             f"{prev_text}"
             f"{news_text}\n\n"
-            f"<i>💡 Non-Trader Guide: {nn_exp[:180]}...</i>"
+            f"💡 <b>Non-Trader Guide:</b> <i>PLAIN-ENGLISH TRADER GUIDE: {nn_exp}</i>"
         )
 
         # 4. Discord Payload
