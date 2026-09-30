@@ -449,6 +449,19 @@ frontend_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "fronte
 if os.path.exists(frontend_path):
     app.mount("/static", StaticFiles(directory=frontend_path), name="static")
 
+# Health Check Endpoints (Render, Docker, Kubernetes)
+@app.get("/healthz")
+@app.get("/health")
+@app.get("/api/status")
+async def health_check():
+    return {
+        "status": "ok",
+        "service": APP_NAME,
+        "version": VERSION,
+        "active_clients": len(system_engine.active_connections),
+        "engine_running": system_engine.is_running
+    }
+
 # Mount Songs Folder
 songs_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "songs_trade")
 os.makedirs(songs_dir, exist_ok=True)
