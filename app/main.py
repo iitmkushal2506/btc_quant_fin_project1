@@ -471,6 +471,8 @@ app.mount("/songs_trade", StaticFiles(directory=songs_dir), name="songs_trade")
 @app.get("/api/songs")
 async def get_trading_songs():
     """Scan the 'songs_trade' folder for audio files."""
+    import urllib.parse
+    import re
     supported_exts = {".mp3", ".wav", ".m4a", ".ogg", ".flac", ".aac", ".mp4"}
     songs_list = []
     
@@ -480,11 +482,16 @@ async def get_trading_songs():
             if ext in supported_exts:
                 fpath = os.path.join(songs_dir, fname)
                 size_mb = round(os.path.getsize(fpath) / (1024 * 1024), 2)
-                clean_title = os.path.splitext(fname)[0].replace("_", " ").replace("-", " ").title()
+                raw_title = os.path.splitext(fname)[0]
+                # Clean up title for elegant UI display
+                clean_title = re.sub(r'[\(\[\{].*?[\)\]\}]', '', raw_title)
+                clean_title = clean_title.replace("｜", " - ").replace("：", ": ").replace("_", " ").strip()
+                clean_title = re.sub(r'\s+', ' ', clean_title)
+                encoded_name = urllib.parse.quote(fname)
                 songs_list.append({
                     "filename": fname,
-                    "title": clean_title,
-                    "url": f"/songs_trade/{fname}",
+                    "title": clean_title or raw_title,
+                    "url": f"/songs_trade/{encoded_name}",
                     "size_mb": size_mb
                 })
     
