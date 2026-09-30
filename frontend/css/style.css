@@ -1266,3 +1266,330 @@ body {
     border-top: 1px dashed var(--border-subtle);
 }
 
+/* ==========================================================================
+   ADVANCED MOBILE & CROSS-DEVICE RESPONSIVE SYSTEM
+   ========================================================================== */
+
+/* Large Tablets & Small Laptops (max-width: 1200px) */
+@media (max-width: 1200px) {
+    .top-nav {
+        padding: 10px 16px;
+        gap: 12px;
+    }
+    
+    .high-low-box {
+        display: none;
+    }
+
+    .dashboard-grid {
+        padding: 0 14px 40px 14px;
+        gap: 16px;
+    }
+
+    .two-col-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .three-col-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Tablets (max-width: 992px) */
+@media (max-width: 992px) {
+    .top-nav {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        padding: 10px 14px;
+    }
+
+    .nav-left {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .music-nav-player {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .music-track-info {
+        max-width: none;
+        flex: 1;
+    }
+
+    .nav-right {
+        justify-content: space-between;
+        width: 100%;
+        flex-wrap: wrap;
+    }
+
+    .three-col-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-wrapper {
+        height: 380px;
+    }
+
+    .world-news-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    }
+}
+
+/* Mobile Phones (max-width: 768px) */
+@media (max-width: 768px) {
+    body {
+        font-size: 13px;
+    }
+
+    .dashboard-grid {
+        margin: 10px auto;
+        padding: 0 10px 30px 10px;
+        gap: 12px;
+    }
+
+    .card {
+        padding: 14px;
+        border-radius: var(--radius-md);
+    }
+
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+    }
+
+    /* Top Nav Mobile Ergonomics */
+    .logo-title {
+        font-size: 14px;
+    }
+
+    .logo-sub {
+        font-size: 9px;
+    }
+
+    .live-ticker-box {
+        padding: 4px 10px;
+    }
+
+    .ticker-price {
+        font-size: 15px;
+    }
+
+    .nav-right {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .countdown-pill {
+        grid-column: span 2;
+        justify-content: center;
+    }
+
+    .nav-action-btn {
+        justify-content: center;
+        width: 100%;
+        padding: 8px 10px;
+        font-size: 11px;
+    }
+
+    /* Scalper Hero Card Mobile */
+    .scalp-hero-top {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 14px;
+    }
+
+    .scalp-main-badge {
+        font-size: 18px;
+        padding: 8px 14px;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .scalp-quick-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .s-metric-box {
+        min-width: 0;
+        width: 100%;
+        padding: 8px 10px;
+    }
+
+    .s-val {
+        font-size: 15px;
+    }
+
+    .scalp-params-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .param-item {
+        padding: 8px 10px;
+    }
+
+    .p-val {
+        font-size: 14px;
+    }
+
+    /* Non-Trader (NN) Explanation */
+    .nn-core-box {
+        padding: 12px 14px;
+        margin-bottom: 14px;
+    }
+
+    .nn-reasons-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .nn-safety-box {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    /* Trade Book KPIs & Forensic Analysis */
+    .tradebook-kpis {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .kpi-box {
+        padding: 10px 12px;
+    }
+
+    .kpi-val {
+        font-size: 16px;
+    }
+
+    .post-mortem-hero {
+        padding: 12px 14px;
+    }
+
+    .pm-head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    /* Professional Data Science Analyst Report */
+    .stat-metric-pills-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+    }
+
+    .stat-pill {
+        padding: 8px 10px;
+    }
+
+    .stat-pill-val {
+        font-size: 14px;
+    }
+
+    /* Interactive Candlestick Chart */
+    .chart-wrapper {
+        height: 320px;
+    }
+
+    .tf-selector {
+        width: 100%;
+        overflow-x: auto;
+        padding-bottom: 4px;
+    }
+
+    .tf-btn {
+        padding: 4px 8px;
+        font-size: 10px;
+    }
+
+    /* Confluence Master & Orderbook */
+    .confluence-master-box {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .pillar-row {
+        padding: 6px 8px;
+    }
+
+    .pillar-bar-wrap {
+        margin: 0 8px;
+    }
+
+    /* ML Predictions & Probabilities */
+    .prob-meter-group {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    /* Worldwide Financial News Terminal */
+    .news-filter-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .news-category-tabs {
+        width: 100%;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 6px;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .news-search-box {
+        width: 100%;
+    }
+
+    .news-search-input {
+        width: 100%;
+    }
+
+    .world-news-grid {
+        grid-template-columns: 1fr;
+        max-height: 400px;
+    }
+}
+
+/* Extra Small Phones (max-width: 480px) */
+@media (max-width: 480px) {
+    .nav-left {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .live-ticker-box {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .scalp-params-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tradebook-kpis {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-metric-pills-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .music-vol {
+        width: 60px;
+    }
+}
+

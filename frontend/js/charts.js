@@ -81,12 +81,23 @@ class ChartManager {
                     title: 'EMA 21',
                 });
 
-                // Responsive resize
-                window.addEventListener('resize', () => {
+                // High-performance responsive resize & orientation observer
+                const handleResize = () => {
                     if (this.chart && this.container) {
-                        this.chart.applyOptions({ width: this.container.clientWidth });
+                        this.chart.applyOptions({ 
+                            width: this.container.clientWidth,
+                            height: this.container.clientHeight || (window.innerWidth < 768 ? 320 : 460)
+                        });
                     }
-                });
+                };
+
+                window.addEventListener('resize', handleResize);
+                window.addEventListener('orientationchange', handleResize);
+
+                if (window.ResizeObserver && this.container) {
+                    const ro = new ResizeObserver(() => handleResize());
+                    ro.observe(this.container);
+                }
 
                 return;
             } catch (err) {
