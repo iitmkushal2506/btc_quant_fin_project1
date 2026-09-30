@@ -57,6 +57,14 @@
         </div>
 
         <div class="nav-right">
+            <!-- Global Real-Time Clock & Timezone Indicator -->
+            <div class="live-clock-pill" id="nav-live-clock" title="Global Live Market Time (GMT / UTC & IST)">
+                <span class="clock-icon">🕒</span>
+                <span class="clock-date" id="live-clock-date">01 Oct 2026</span>
+                <span class="clock-badge utc" id="live-clock-utc" title="Coordinated Universal Time (GMT)">--:--:-- UTC</span>
+                <span class="clock-badge ist" id="live-clock-ist" title="Indian Standard Time (UTC+5:30)">--:--:-- IST</span>
+            </div>
+
             <!-- Theme Toggle Button (White Base vs Black Mode) -->
             <button id="theme-toggle-btn" class="nav-action-btn theme-toggle-btn" title="Toggle Black / White Background Theme">
                 🌙 Theme: Black
@@ -526,22 +534,59 @@
              ========================================================================= -->
         <div class="two-col-grid">
             
-            <!-- Candlestick Chart Card -->
-            <section class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <span>📊 LIVE CANDLESTICK & TECHNICAL CHART</span>
+            <!-- TradingView Style Candlestick & Technical Analysis Card -->
+            <section class="card tv-chart-card">
+                <div class="tv-chart-topbar">
+                    <div class="tv-bar-left">
+                        <div class="tv-symbol-pill">
+                            <span class="tv-coin-icon">₿</span>
+                            <span class="tv-symbol-text">BTC/USDT</span>
+                            <span class="tv-exchange-badge">BINANCE</span>
+                        </div>
+                        <div class="tf-selector tv-tf-selector">
+                            <button class="tf-btn" data-tf="1m">1m</button>
+                            <button class="tf-btn active" data-tf="5m">5m</button>
+                            <button class="tf-btn" data-tf="15m">15m</button>
+                            <button class="tf-btn" data-tf="1h">1h</button>
+                            <button class="tf-btn" data-tf="4h">4h</button>
+                            <button class="tf-btn" data-tf="1d">1D</button>
+                        </div>
+                        <div class="tv-chart-types">
+                            <button class="tv-type-btn active" id="tv-type-candle" title="Candlestick View">📊 Candles</button>
+                            <button class="tv-type-btn" id="tv-type-line" title="Line View">📈 Line</button>
+                            <button class="tv-type-btn" id="tv-type-area" title="Area Mountain View">📉 Area</button>
+                        </div>
                     </div>
-                    <div class="tf-selector">
-                        <button class="tf-btn" data-tf="1m">1M</button>
-                        <button class="tf-btn active" data-tf="5m">5M</button>
-                        <button class="tf-btn" data-tf="15m">15M</button>
-                        <button class="tf-btn" data-tf="1h">1H</button>
-                        <button class="tf-btn" data-tf="4h">4H</button>
-                        <button class="tf-btn" data-tf="1d">1D</button>
+
+                    <div class="tv-bar-right">
+                        <div class="tv-indicators-toggle">
+                            <button class="tv-ind-toggle active" id="toggle-ema9-btn" title="Toggle EMA 9 Ribbon"><span class="ind-color-dot" style="background: #2563eb;"></span>EMA 9</button>
+                            <button class="tv-ind-toggle active" id="toggle-ema21-btn" title="Toggle EMA 21 Ribbon"><span class="ind-color-dot" style="background: #f59e0b;"></span>EMA 21</button>
+                            <button class="tv-ind-toggle active" id="toggle-vol-btn" title="Toggle Volume Histogram"><span class="ind-color-dot" style="background: #94a3b8;"></span>Vol</button>
+                        </div>
+                        <div class="tv-tz-toggle">
+                            <button class="tv-tz-btn active" id="tv-tz-utc" title="Chart Timezone: UTC (GMT)">UTC</button>
+                            <button class="tv-tz-btn" id="tv-tz-ist" title="Chart Timezone: IST (+5:30)">IST</button>
+                        </div>
+                        <button class="tv-action-btn" id="tv-fit-btn" title="Reset View / Fit Recent 7 Days">🎯 Fit</button>
+                        <button class="tv-action-btn" id="tv-fullscreen-btn" title="Toggle Fullscreen Chart Mode">⛶</button>
                     </div>
                 </div>
-                <div class="chart-wrapper" id="candlestick-chart"></div>
+
+                <!-- TradingView Hover & Live OHLCV Floating Legend -->
+                <div class="tv-legend-bar" id="tv-legend-bar">
+                    <span class="tv-leg-item sym"><b id="leg-sym">BTCUSDT</b> <small id="leg-tf">5m</small></span>
+                    <span class="tv-leg-item">O <b id="leg-open">--</b></span>
+                    <span class="tv-leg-item">H <b id="leg-high">--</b></span>
+                    <span class="tv-leg-item">L <b id="leg-low">--</b></span>
+                    <span class="tv-leg-item">C <b id="leg-close">--</b></span>
+                    <span class="tv-leg-item"><b id="leg-change" class="text-green">--</b></span>
+                    <span class="tv-leg-item vol">Vol <b id="leg-vol">--</b></span>
+                    <span class="tv-leg-item" id="leg-ema9-box" style="color: #2563eb;">EMA 9 <b id="leg-ema9">--</b></span>
+                    <span class="tv-leg-item" id="leg-ema21-box" style="color: #f59e0b;">EMA 21 <b id="leg-ema21">--</b></span>
+                </div>
+
+                <div class="chart-wrapper tv-chart-container" id="candlestick-chart"></div>
             </section>
 
             <!-- 7-Pillar Confluence Card -->

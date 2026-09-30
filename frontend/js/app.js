@@ -64,6 +64,53 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ----------------------------------------------------
+    // GLOBAL CLOCK TICKER: DATE + DUAL TIMEZONE (UTC/GMT & IST)
+    // ----------------------------------------------------
+    function updateLiveClock() {
+        const dateEl = document.getElementById('live-clock-date');
+        const utcEl = document.getElementById('live-clock-utc');
+        const istEl = document.getElementById('live-clock-ist');
+
+        const now = new Date();
+
+        // 1. Formatted Date
+        const dateStr = now.toLocaleDateString('en-US', {
+            weekday: 'short',
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
+        });
+        if (dateEl) dateEl.textContent = dateStr;
+
+        // 2. UTC (GMT) Time
+        const utcHours = String(now.getUTCHours()).padStart(2, '0');
+        const utcMinutes = String(now.getUTCMinutes()).padStart(2, '0');
+        const utcSeconds = String(now.getUTCSeconds()).padStart(2, '0');
+        if (utcEl) utcEl.textContent = `${utcHours}:${utcMinutes}:${utcSeconds} UTC (GMT)`;
+
+        // 3. Indian Standard Time (IST - UTC+5:30)
+        try {
+            const istTimeStr = now.toLocaleTimeString('en-US', {
+                timeZone: 'Asia/Kolkata',
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            if (istEl) istEl.textContent = `${istTimeStr} IST (+5:30)`;
+        } catch (e) {
+            const istDate = new Date(now.getTime() + (5.5 * 3600 * 1000));
+            const istH = String(istDate.getUTCHours()).padStart(2, '0');
+            const istM = String(istDate.getUTCMinutes()).padStart(2, '0');
+            const istS = String(istDate.getUTCSeconds()).padStart(2, '0');
+            if (istEl) istEl.textContent = `${istH}:${istM}:${istS} IST (+5:30)`;
+        }
+    }
+
+    updateLiveClock();
+    setInterval(updateLiveClock, 1000);
+
+    // ----------------------------------------------------
     // 2. SONGS_TRADE FOLDER MUSIC ENGINE
     // ----------------------------------------------------
     function updateNextSongPreview() {
@@ -210,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initThemeSwitcher();
 
     // ----------------------------------------------------
-    // 3. INITIALIZE CHART
+    // 3. INITIALIZE TRADINGVIEW PRO CHART
     // ----------------------------------------------------
     try {
         chartManager = new ChartManager('candlestick-chart');
@@ -219,15 +266,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Apply current theme to chart immediately
         const activeTheme = localStorage.getItem('btc_quant_theme') || 'light';
         chartManager.setTheme(activeTheme);
-
-        document.querySelectorAll('.tf-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                document.querySelectorAll('.tf-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                const tf = btn.getAttribute('data-tf');
-                chartManager.loadKlines(tf);
-            });
-        });
     } catch (e) {
         console.warn("Chart manager initialization:", e);
     }

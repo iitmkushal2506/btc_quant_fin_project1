@@ -1016,8 +1016,235 @@ body {
     }
 }
 
+/* Live Global Market Clock (UTC + IST) */
+.live-clock-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-surface-subtle);
+    border: 1px solid var(--border-subtle);
+    padding: 5px 10px;
+    border-radius: var(--radius-md);
+    font-size: 11px;
+    font-family: var(--font-mono);
+}
+
+.live-clock-pill .clock-icon {
+    font-size: 12px;
+}
+
+.live-clock-pill .clock-date {
+    font-weight: 700;
+    color: var(--text-secondary);
+    padding-right: 6px;
+    border-right: 1px solid var(--border-subtle);
+}
+
+.clock-badge {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.clock-badge.utc {
+    background: rgba(37, 99, 235, 0.12);
+    color: var(--color-blue);
+    border: 1px solid rgba(37, 99, 235, 0.25);
+}
+
+.clock-badge.ist {
+    background: rgba(245, 158, 11, 0.12);
+    color: #d97706;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+[data-theme="dark"] .clock-badge.ist {
+    color: #fbbf24;
+}
+
+/* ==========================================================================
+   TRADINGVIEW PRO CHART CARD & CONTROLS
+   ========================================================================== */
+
+.tv-chart-card {
+    padding: 0 !important;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border: 1px solid var(--border-subtle);
+}
+
+.tv-chart-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: var(--bg-surface-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.tv-bar-left, .tv-bar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.tv-symbol-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+}
+
+.tv-coin-icon {
+    font-size: 13px;
+    color: #f59e0b;
+    font-weight: 900;
+}
+
+.tv-symbol-text {
+    font-size: 12px;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    color: var(--text-primary);
+}
+
+.tv-exchange-badge {
+    font-size: 9px;
+    font-weight: 800;
+    background: var(--bg-surface-subtle);
+    color: var(--text-muted);
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+.tv-chart-types, .tv-indicators-toggle, .tv-tz-toggle {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    background: var(--bg-surface);
+    padding: 2px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-subtle);
+}
+
+.tv-type-btn, .tv-ind-toggle, .tv-tz-btn, .tv-action-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    transition: var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.tv-type-btn.active, .tv-tz-btn.active {
+    background: var(--color-blue);
+    color: #ffffff;
+}
+
+.tv-ind-toggle {
+    opacity: 0.5;
+}
+
+.tv-ind-toggle.active {
+    opacity: 1;
+    background: var(--bg-surface-subtle);
+    color: var(--text-primary);
+}
+
+.ind-color-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.tv-action-btn {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+}
+
+.tv-action-btn:hover {
+    background: var(--bg-surface-subtle);
+    color: var(--color-blue);
+}
+
+/* TradingView Floating OHLCV Legend Bar */
+.tv-legend-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 14px;
+    background: transparent;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-secondary);
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border-subtle);
+    position: relative;
+    z-index: 10;
+}
+
+.tv-leg-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.tv-leg-item b {
+    color: var(--text-primary);
+    font-weight: 700;
+}
+
+.tv-leg-item.sym b {
+    color: var(--color-blue);
+    font-weight: 800;
+}
+
+.tv-chart-container {
+    height: 480px;
+    width: 100%;
+    position: relative;
+    background: #ffffff;
+}
+
+[data-theme="dark"] .tv-chart-container {
+    background: #131722;
+}
+
+/* Fullscreen Mode */
+.tv-chart-card.fullscreen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 999999 !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+}
+
+.tv-chart-card.fullscreen .tv-chart-container {
+    height: calc(100vh - 85px) !important;
+}
+
 .chart-wrapper {
-    height: 460px;
+    height: 480px;
     width: 100%;
     position: relative;
     background: #ffffff;
