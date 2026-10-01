@@ -79,6 +79,8 @@ class CloudAlertService:
                 news_items.append(f"• {s_icon} [{region}] <i>{title[:90]}</i>")
             news_text = "\n\n📰 <b>Latest Breaking Market News:</b>\n" + "\n".join(news_items)
 
+        clean_guide = nn_exp if str(nn_exp).startswith("PLAIN-ENGLISH TRADER GUIDE:") else f"PLAIN-ENGLISH TRADER GUIDE: {nn_exp}"
+
         # 3. Telegram Message (HTML formatted)
         telegram_msg = (
             f"<b>{dir_emoji} BITCOIN 5M SCALP TRADE ALERT</b>\n"
@@ -93,7 +95,7 @@ class CloudAlertService:
             f"<b>🧠 Quantitative Setup Triggers:</b>{reasons_text}"
             f"{prev_text}"
             f"{news_text}\n\n"
-            f"💡 <b>Non-Trader Guide:</b> <i>PLAIN-ENGLISH TRADER GUIDE: {nn_exp}</i>"
+            f"💡 <b>Non-Trader Guide:</b> <i>{clean_guide}</i>"
         )
 
         # 4. Discord Payload

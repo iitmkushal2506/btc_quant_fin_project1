@@ -247,7 +247,9 @@ async def background_intelligence_loop():
     while system_engine.is_running:
         try:
             await system_engine.update_pipeline()
-            await system_engine.scalp_engine.evaluate_5m_scalp()
+            confluence = system_engine.latest_assessment.get("confluence") if system_engine.latest_assessment else None
+            decision = system_engine.latest_assessment.get("decision") if system_engine.latest_assessment else None
+            await system_engine.scalp_engine.evaluate_5m_scalp(confluence_data=confluence, master_decision=decision)
             await system_engine.broadcast_live_update()
         except Exception as e:
             logger.warning(f"Background loop iteration error: {e}")
@@ -260,7 +262,9 @@ async def lifespan(app: FastAPI):
     system_engine.is_running = True
     # Initial pipeline & scalp engine run
     await system_engine.update_pipeline()
-    await system_engine.scalp_engine.evaluate_5m_scalp()
+    confluence = system_engine.latest_assessment.get("confluence") if system_engine.latest_assessment else None
+    decision = system_engine.latest_assessment.get("decision") if system_engine.latest_assessment else None
+    await system_engine.scalp_engine.evaluate_5m_scalp(confluence_data=confluence, master_decision=decision)
     # Start background task
     bg_task = asyncio.create_task(background_intelligence_loop())
     yield
@@ -543,7 +547,11 @@ async def get_professional_trade_analysis():
 @app.get("/api/scalp/overview")
 async def get_scalp_overview():
     """Get active 5-minute trade, timer countdown, and performance stats."""
-    return await system_engine.scalp_engine.evaluate_5m_scalp()
+    if not system_engine.latest_assessment:
+        await system_engine.update_pipeline()
+    confluence = system_engine.latest_assessment.get("confluence") if system_engine.latest_assessment else None
+    decision = system_engine.latest_assessment.get("decision") if system_engine.latest_assessment else None
+    return await system_engine.scalp_engine.evaluate_5m_scalp(confluence_data=confluence, master_decision=decision)
 
 @app.get("/api/scalp/history")
 async def get_scalp_history():
@@ -557,7 +565,11 @@ async def get_scalp_history():
 async def force_generate_scalp():
     """Force instant generation of a fresh 5-minute scalp setup."""
     system_engine.scalp_engine.last_signal_time = 0
-    return await system_engine.scalp_engine.evaluate_5m_scalp()
+    if not system_engine.latest_assessment:
+        await system_engine.update_pipeline()
+    confluence = system_engine.latest_assessment.get("confluence") if system_engine.latest_assessment else None
+    decision = system_engine.latest_assessment.get("decision") if system_engine.latest_assessment else None
+    return await system_engine.scalp_engine.evaluate_5m_scalp(confluence_data=confluence, master_decision=decision)
 
 @app.get("/scalp")
 @app.get("/5m")
