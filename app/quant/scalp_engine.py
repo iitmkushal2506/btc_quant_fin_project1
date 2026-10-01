@@ -150,51 +150,82 @@ class ScalpEngine:
         seconds_in_5m = int(now) % 300
         seconds_until_next_5m = 300 - seconds_in_5m
 
-        # 4. Check / Update Active Trade State
+        # 4. Check & Resolve Active Trade State (TP, SL, or 5-Minute Timeframe Expiration)
         if self.active_trade and self.active_trade.get("status") == "ACTIVE":
             trade = self.active_trade
+            elapsed_sec = now - (trade.get("timestamp", now * 1000) / 1000.0)
             closed = False
-            if trade["type"] == "LONG":
-                if curr_price >= trade["target_1"]:
+
+            entry_p = float(trade.get("entry_price", curr_price))
+            sl_p = float(trade.get("stop_loss", curr_price - 160))
+            tp1_p = float(trade.get("target_1", curr_price + 265))
+            trade_type = trade.get("type", "LONG")
+            risk_dist = abs(entry_p - sl_p) or 150.0
+
+            if trade_type == "LONG":
+                if curr_price >= tp1_p:
                     trade["status"] = "CLOSED"
                     trade["outcome"] = "WIN"
-                    trade["exit_price"] = trade["target_1"]
+                    trade["exit_price"] = tp1_p
                     trade["pnl_usd"] = 165.0
+                    trade["r_multiple"] = 1.65
                     closed = True
-                elif curr_price <= trade["stop_loss"]:
+                elif curr_price <= sl_p:
                     trade["status"] = "CLOSED"
                     trade["outcome"] = "LOSS"
-                    trade["exit_price"] = trade["stop_loss"]
+                    trade["exit_price"] = sl_p
                     trade["pnl_usd"] = -100.0
+                    trade["r_multiple"] = -1.0
                     closed = True
-            elif trade["type"] == "SHORT":
-                if curr_price <= trade["target_1"]:
+                elif elapsed_sec >= 300:  # 5-minute candle timeframe expired
+                    trade["status"] = "CLOSED"
+                    trade["exit_price"] = curr_price
+                    realized_pnl = round(((curr_price - entry_p) / risk_dist) * 100.0, 2)
+                    trade["pnl_usd"] = realized_pnl
+                    trade["r_multiple"] = round(realized_pnl / 100.0, 2)
+                    trade["outcome"] = "WIN" if realized_pnl >= 0 else "LOSS"
+                    closed = True
+            elif trade_type == "SHORT":
+                if curr_price <= tp1_p:
                     trade["status"] = "CLOSED"
                     trade["outcome"] = "WIN"
-                    trade["exit_price"] = trade["target_1"]
+                    trade["exit_price"] = tp1_p
                     trade["pnl_usd"] = 165.0
+                    trade["r_multiple"] = 1.65
                     closed = True
-                elif curr_price >= trade["stop_loss"]:
+                elif curr_price >= sl_p:
                     trade["status"] = "CLOSED"
                     trade["outcome"] = "LOSS"
-                    trade["exit_price"] = trade["stop_loss"]
+                    trade["exit_price"] = sl_p
                     trade["pnl_usd"] = -100.0
+                    trade["r_multiple"] = -1.0
+                    closed = True
+                elif elapsed_sec >= 300:  # 5-minute candle timeframe expired
+                    trade["status"] = "CLOSED"
+                    trade["exit_price"] = curr_price
+                    realized_pnl = round(((entry_p - curr_price) / risk_dist) * 100.0, 2)
+                    trade["pnl_usd"] = realized_pnl
+                    trade["r_multiple"] = round(realized_pnl / 100.0, 2)
+                    trade["outcome"] = "WIN" if realized_pnl >= 0 else "LOSS"
                     closed = True
 
             if closed:
-                # Record to TradeBook and Excel
+                # Record to persistent TradeBook and Excel
                 self.trade_book.record_completed_trade(trade)
+                logger.info(f"5M Scalp Closed: {trade['id']} | Outcome: {trade['outcome']} | PnL: ${trade['pnl_usd']:+,.2f}")
                 
-                # Broadcast Instant Close Alert (Profit or Loss Result)
+                # Broadcast instant closed alert to Telegram
                 try:
                     import asyncio
                     from app.services.alert_bot import cloud_alert_service
                     asyncio.create_task(cloud_alert_service.broadcast_trade_closed(trade))
                 except Exception as e:
-                    logger.debug(f"Cloud alert close broadcast: {e}")
+                    logger.debug(f"Cloud alert close broadcast error: {e}")
 
-        # 5. Generate new trade setup if needed
-        if not self.active_trade or self.active_trade.get("status") == "CLOSED" or (now - self.last_signal_time) >= 280:
+                self.active_trade = None  # Reset active trade to trigger next setup
+
+        # 5. Formulate Next 5-Minute Scalp Trade Setup on Fresh Indicators
+        if not self.active_trade or self.active_trade.get("status") == "CLOSED":
             direction = "LONG" if micro_score >= 0 else "SHORT"
             sl_dist = atr_5m * 1.2
             tp1_dist = sl_dist * 1.65
@@ -244,7 +275,7 @@ class ScalpEngine:
                 from app.services.alert_bot import cloud_alert_service
                 from app.collectors.news_collector import news_collector
                 
-                prev_trade = self.trade_book.trades[0] if self.trade_book.trades else None
+                prev_trade = self.trade_book.get_latest_closed_trade()
                 cached_news = news_collector._cache.get("data", {}).get("articles", []) if news_collector._cache else []
                 if not cached_news:
                     cached_news = news_collector._generate_fallback_news()
@@ -255,7 +286,7 @@ class ScalpEngine:
                     latest_news=cached_news[:2]
                 ))
             except Exception as e:
-                logger.debug(f"Cloud alert broadcast: {e}")
+                logger.debug(f"Cloud alert broadcast error: {e}")
 
 
         perf_stats = self.trade_book.get_performance_metrics()

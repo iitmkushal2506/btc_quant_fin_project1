@@ -243,22 +243,24 @@ system_engine = IntelligenceSystem()
 
 # Background Loop
 async def background_intelligence_loop():
-    logger.info("Starting background market intelligence loop...")
+    logger.info("Starting background market intelligence & 5M scalp execution loop...")
     while system_engine.is_running:
         try:
             await system_engine.update_pipeline()
+            await system_engine.scalp_engine.evaluate_5m_scalp()
             await system_engine.broadcast_live_update()
         except Exception as e:
             logger.warning(f"Background loop iteration error: {e}")
-        await asyncio.sleep(4.0) # Refresh every 4 seconds
+        await asyncio.sleep(3.0) # Refresh every 3 seconds
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
     system_engine.is_running = True
-    # Initial pipeline run
+    # Initial pipeline & scalp engine run
     await system_engine.update_pipeline()
+    await system_engine.scalp_engine.evaluate_5m_scalp()
     # Start background task
     bg_task = asyncio.create_task(background_intelligence_loop())
     yield

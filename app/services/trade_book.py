@@ -16,17 +16,42 @@ from openpyxl.utils import get_column_letter
 logger = logging.getLogger("TRADE_BOOK")
 
 class TradeBookService:
-    def __init__(self, excel_filename: str = "trade_book.xlsx"):
+    def __init__(self, excel_filename: str = "trade_book.xlsx", json_filename: str = "trade_book.json"):
         self.project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
         self.excel_path = os.path.join(self.project_root, excel_filename)
+        self.json_path = os.path.join(self.project_root, json_filename)
         self.trades: List[Dict[str, Any]] = []
-        self._seed_initial_trades()
+        self._load_or_seed_trades()
         self.export_to_excel()
+
+    def _load_or_seed_trades(self):
+        """Load existing trades from JSON file or seed initial trade journal."""
+        if os.path.exists(self.json_path):
+            try:
+                with open(self.json_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    if isinstance(data, list) and len(data) > 0:
+                        self.trades = data
+                        logger.info(f"Loaded {len(self.trades)} trades from persistent trade_book.json")
+                        return
+            except Exception as e:
+                logger.warning(f"Error loading trade_book.json: {e}")
+
+        self._seed_initial_trades()
+        self._save_to_json()
+
+    def _save_to_json(self):
+        """Persist current trades array to JSON file."""
+        try:
+            with open(self.json_path, "w", encoding="utf-8") as f:
+                json.dump(self.trades, f, indent=2, ensure_ascii=False)
+        except Exception as e:
+            logger.error(f"Error saving trade_book.json: {e}")
 
     def _seed_initial_trades(self):
         """Seed realistic trade journal with detailed non-trader analysis and post-mortem reasons."""
         now = time.time()
-        base_price = 84150.0
+        base_price = 83750.0
 
         seed_trades = [
             {
@@ -230,6 +255,7 @@ class TradeBookService:
         else:
             self.trades.insert(0, completed_record)
 
+        self._save_to_json()
         self.export_to_excel()
 
     def get_latest_closed_trade(self) -> Optional[Dict[str, Any]]:
